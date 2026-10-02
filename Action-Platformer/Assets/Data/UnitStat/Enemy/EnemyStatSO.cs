@@ -1,6 +1,6 @@
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "EnemyStatSO_", menuName = "Unit Stat Data/Enemy")]
+[CreateAssetMenu(fileName = "EnemyStatSO_", menuName = "Scriptable Objects/Enemy Stat Data")]
 public class EnemyStatSO : ScriptableObject
 {
     // 1_00 당 1로 처리

@@ -1,20 +1,22 @@
-using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
 public class PlayerHitboxManager : MonoBehaviour
 {
-    [Header("Attack")]
+    [Header("Attack Hitboxes")]
     [SerializeField] LayerMask _attackTargetLayer;
     [Space(10)]
-    [SerializeField] Transform _gAttack0_center;
+    [SerializeField] Transform _gAttack0_Center;
     [SerializeField] Vector2 _gAttack0_Size = new(0.1f, 0.8f);
+    [SerializeField] CombatFeedbackSO _gAttack0_Feedback;
     [Space(10)]
-    [SerializeField] Transform _gAttack1_center;
+    [SerializeField] Transform _gAttack1_Center;
     [SerializeField] Vector2 _gAttack1_Size = new(0.1f, 0.8f);
+    [SerializeField] CombatFeedbackSO _gAttack1_Feedback;
     [Space(10)]
-    [SerializeField] Transform _gAttack2_center;
+    [SerializeField] Transform _gAttack2_Center;
     [SerializeField] Vector2 _gAttack2_Size = new(0.1f, 0.8f);
+    [SerializeField] CombatFeedbackSO _gAttack2_Feedback;
 
     public void SetFacingDirection(PlayerInput.MoveDirection direction)
     {
@@ -33,37 +35,55 @@ public class PlayerHitboxManager : MonoBehaviour
 
     public void CheckGroundAttack0()
     {
-        CheckGroundAttackHit(_gAttack0_center, _gAttack0_Size);
+        if (!IsGroundAttackHit(_gAttack0_Center, _gAttack0_Size))
+            return;
+
+        // TODO : 좋은 Feedback을 주도록 노력할 것
+        // 이걸 구조화해서 정리하면 최고!
+
+        // TimeManager.Instance를 통해 Timescale 조정 (슬로우 or 정지)
+        // 타격 VFX 출력
+        // SFX 출력
+        // 캐릭터 약간 Knockback?
+
+        // Camera Shake
+        CombatFeedbackManager.Instance.ApplyFeedback(_gAttack0_Feedback);
     }
 
     public void CheckGroundAttack1()
     {
-        CheckGroundAttackHit(_gAttack1_center, _gAttack1_Size);
+        if (!IsGroundAttackHit(_gAttack1_Center, _gAttack1_Size))
+            return;
+
+        CombatFeedbackManager.Instance.ApplyFeedback(_gAttack1_Feedback);
     }
 
     public void CheckGroundAttack2()
     {
-        CheckGroundAttackHit(_gAttack2_center, _gAttack2_Size);
+        if (!IsGroundAttackHit(_gAttack2_Center, _gAttack2_Size))
+            return;
+
+        CombatFeedbackManager.Instance.ApplyFeedback(_gAttack2_Feedback);
     }
 
-    void CheckGroundAttackHit(Transform center, Vector2 size)
+    bool IsGroundAttackHit(Transform center, Vector2 size)
     {
-        Collider2D[] hits = Physics2D.OverlapBoxAll(
+        Collider2D[] enemyHitboxes = Physics2D.OverlapBoxAll(
             center.position,
             size,
             0f,
             _attackTargetLayer
         );
 
-        if (hits.Length == 0)
-            return;
+        if (enemyHitboxes.Length == 0)
+            return false;
 
-        foreach (Collider2D hit in hits)
+        foreach (Collider2D hitbox in enemyHitboxes)
         {
-            Debug.Log($"Hit : {hit.name}");
+            Debug.Log($"Hit : {hitbox.name}");
         }
 
-        CameraManager.Instance.Shake();
+        return true;
     }
 
     #endregion
@@ -78,28 +98,28 @@ public class PlayerHitboxManager : MonoBehaviour
 
         if (selected == transform)
         {
-            DrawHitbox(_gAttack0_center, _gAttack0_Size);
-            DrawHitbox(_gAttack1_center, _gAttack1_Size);
-            DrawHitbox(_gAttack2_center, _gAttack2_Size);
+            DrawHitbox(_gAttack0_Center, _gAttack0_Size);
+            DrawHitbox(_gAttack1_Center, _gAttack1_Size);
+            DrawHitbox(_gAttack2_Center, _gAttack2_Size);
             return;
         }
 
-        if (_gAttack0_center != null &&
-            Selection.Contains(_gAttack0_center.gameObject))
+        if (_gAttack0_Center != null &&
+            Selection.Contains(_gAttack0_Center.gameObject))
         {
-            DrawHitbox(_gAttack0_center, _gAttack0_Size);
+            DrawHitbox(_gAttack0_Center, _gAttack0_Size);
         }
 
-        if (_gAttack1_center != null &&
-            Selection.Contains(_gAttack1_center.gameObject))
+        if (_gAttack1_Center != null &&
+            Selection.Contains(_gAttack1_Center.gameObject))
         {
-            DrawHitbox(_gAttack1_center, _gAttack1_Size);
+            DrawHitbox(_gAttack1_Center, _gAttack1_Size);
         }
 
-        if (_gAttack2_center != null &&
-            Selection.Contains(_gAttack2_center.gameObject))
+        if (_gAttack2_Center != null &&
+            Selection.Contains(_gAttack2_Center.gameObject))
         {
-            DrawHitbox(_gAttack2_center, _gAttack2_Size);
+            DrawHitbox(_gAttack2_Center, _gAttack2_Size);
         }
     }
 

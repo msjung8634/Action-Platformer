@@ -6,16 +6,19 @@ public class CameraManager : Singleton<CameraManager>
 {
     [SerializeField] CinemachineImpulseSource _impulseSource;
 
-    public void Shake(float strength = 1f, int count = 1, float interval = 0.05f)
+    public void ApplyCombatFeedbackShake(CombatFeedbackSO feedbackData)
     {
-        ShakeAsync(strength, count, interval).Forget();
+        ShakeAsync(feedbackData).Forget();
     }
-    async UniTaskVoid ShakeAsync(float strength, int count, float interval)
+    async UniTaskVoid ShakeAsync(CombatFeedbackSO feedbackData)
     {
+        var count = feedbackData.ShakeCount;
+        var interval = feedbackData.ShakeInterval;
+
         for (int i = 0; i < count; i++)
         {
             Vector2 direction = Random.insideUnitCircle.normalized;
-            Vector3 velocity = direction * strength;
+            Vector3 velocity = direction * feedbackData.ShakeStrength;
 
             _impulseSource.GenerateImpulseWithVelocity(velocity);
 

@@ -337,6 +337,50 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &330439838
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 330439839}
+  - component: {fileID: 330439840}
+  m_Layer: 0
+  m_Name: CombatFeedbackManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &330439839
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 330439838}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &330439840
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 330439838}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 303515692252abb4a862d7013508dd32, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CombatFeedbackManager
 --- !u!1 &348567142
 GameObject:
   m_ObjectHideFlags: 0
@@ -1011,6 +1055,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 649264143}
+  - component: {fileID: 649264144}
   m_Layer: 0
   m_Name: TimeManager
   m_TagString: Untagged
@@ -1033,6 +1078,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &649264144
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 649264142}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b1c6a8487611814192aea4297eb3722, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TimeManager
 --- !u!1 &774473787
 GameObject:
   m_ObjectHideFlags: 0
@@ -1115,12 +1172,15 @@ MonoBehaviour:
   _attackTargetLayer:
     serializedVersion: 2
     m_Bits: 256
-  _gAttack0_center: {fileID: 587185741}
+  _gAttack0_Center: {fileID: 587185741}
   _gAttack0_Size: {x: 0.6, y: 0.8}
-  _gAttack1_center: {fileID: 1844137341}
+  _gAttack0_Feedback: {fileID: 11400000, guid: 74121391a6b0cd641b345c9a59ce0d92, type: 2}
+  _gAttack1_Center: {fileID: 1844137341}
   _gAttack1_Size: {x: 0.74, y: 1}
-  _gAttack2_center: {fileID: 1422301577}
+  _gAttack1_Feedback: {fileID: 11400000, guid: 693bdbafe05e5834f865e8f64ee25da1, type: 2}
+  _gAttack2_Center: {fileID: 1422301577}
   _gAttack2_Size: {x: 0.95, y: 0.4}
+  _gAttack2_Feedback: {fileID: 11400000, guid: 3d5cee76b03ef0d43843fdd201de8a2a, type: 2}
 --- !u!1 &825617820
 GameObject:
   m_ObjectHideFlags: 0
@@ -1934,9 +1994,9 @@ MonoBehaviour:
   Gain: 1
   Use2DDistance: 1
   UseCameraSpace: 1
-  SignalCombinationMode: 0
+  SignalCombinationMode: 1
   ReactionSettings:
-    m_SecondaryNoise: {fileID: 0}
+    m_SecondaryNoise: {fileID: 11400000, guid: 554b0ed52734c154eab51f6cedd3a7d7, type: 2}
     AmplitudeGain: 1
     FrequencyGain: 1
     Duration: 1
@@ -2717,6 +2777,7 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 1725184873}
+  - {fileID: 330439839}
   - {fileID: 1621418509}
   - {fileID: 649264143}
   - {fileID: 174454563}

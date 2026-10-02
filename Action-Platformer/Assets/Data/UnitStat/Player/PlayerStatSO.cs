@@ -1,6 +1,6 @@
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "PlayerStatSO", menuName = "Unit Stat Data/Player")]
+[CreateAssetMenu(fileName = "PlayerStatSO", menuName = "Scriptable Objects/Player Stat Data")]
 public class PlayerStatSO : ScriptableObject
 {
     // 1_00 당 1로 처리
