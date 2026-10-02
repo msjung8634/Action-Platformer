@@ -62,6 +62,8 @@ public class PlayerHitboxManager : MonoBehaviour
         {
             Debug.Log($"Hit : {hit.name}");
         }
+
+        CameraManager.Instance.Shake();
     }
 
     #endregion
