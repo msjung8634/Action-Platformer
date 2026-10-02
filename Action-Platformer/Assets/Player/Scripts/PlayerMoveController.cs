@@ -1,17 +1,14 @@
 using System;
 using UnityEngine;
 
-[RequireComponent(typeof(PlayerInput))]
-[RequireComponent(typeof(PlayerVisual))]
-[RequireComponent(typeof(Rigidbody2D))]
-public class PlayerMove : MonoBehaviour
+public class PlayerMoveController : MonoBehaviour
 {
-    PlayerInput _playerInput;
-    PlayerVisual _playerVisual;
-    Rigidbody2D _rigidbody;
-
-    [Header("CollisionChecker")]
+    [Header("Refrences")]
+    [SerializeField] PlayerInput _playerInput;
+    [SerializeField] Rigidbody2D _rigidbody;
     [SerializeField] CollisionChecker _collisionChecker;
+    [SerializeField] UnitStateMachine _stateMachine;
+    [SerializeField] PlayerVisual _playerVisual;
 
     [Header("Move Speed")]
     [SerializeField] float _runSpeed = 5f;
@@ -26,42 +23,49 @@ public class PlayerMove : MonoBehaviour
     [SerializeField, Range(0f, 1f)] float _jumpCutMultiplier = 0.5f;
 
     Vector2 _moveDirection;
-
-    void Awake()
-    {
-        TryGetComponent(out _playerInput);
-        TryGetComponent(out _playerVisual);
-        TryGetComponent(out _rigidbody);
-    }
+    bool _isMovable => _stateMachine?.Move?.CurrentState.Equals(Move.State.Movable) ?? false;
 
     void OnEnable()
     {
-        _playerInput.JumpStarted += OnJumpStarted;
-        _playerInput.JumpCanceled += OnJumpCanceled;
+        if (_playerInput != null)
+        {
+            _playerInput.JumpStarted += OnJumpStarted;
+            _playerInput.JumpCanceled += OnJumpCanceled;
+        }
     }
 
     void OnDisable()
     {
-        _playerInput.JumpStarted -= OnJumpStarted;
-        _playerInput.JumpCanceled -= OnJumpCanceled;
+        if (_playerInput != null)
+        {
+            _playerInput.JumpStarted -= OnJumpStarted;
+            _playerInput.JumpCanceled -= OnJumpCanceled;
+        }
     }
 
     void Update()
     {
+        // Move.State 확인
+        if (!_isMovable)
+            return;
+
         var desiredDirection = _playerInput.DesiredDirection;
         _moveDirection = GetMoveVector(desiredDirection);
+
         _playerVisual.SetFacingDirection(desiredDirection);
 
-        // Idle [0.0 ~ _idleThreshold] / Walk [_idleThreshold ~ _walkThreshold] / Run [_walkThreshold ~ 1.0]
         float inputMagnitude = Mathf.Abs(_playerInput.RawInput.x);
-        if (inputMagnitude <= _idleThreshold)
+        // Idle [0.0 ~ _idleThreshold]
+        if (inputMagnitude <= _idleThreshold) 
         {
             _moveSpeedMultiplier = 0f;
         }
+        // Walk [_idleThreshold ~ _walkThreshold]
         else if (inputMagnitude <= _walkThreshold)
         {
             _moveSpeedMultiplier = _walkSpeedMultiplier;
         }
+        // Run [_walkThreshold ~ 1.0]
         else
         {
             _moveSpeedMultiplier = 1f;
@@ -83,16 +87,30 @@ public class PlayerMove : MonoBehaviour
 
     void FixedUpdate()
     {
-        // X축만 제어
         Vector2 velocity = _rigidbody.linearVelocity;
-        velocity.x = _moveDirection.x * _runSpeed * _moveSpeedMultiplier;
 
+        // Move.State 확인
+        if (!_isMovable)
+        {
+            velocity.x = 0f;
+            _rigidbody.linearVelocity = velocity;
+            return;
+        }
+
+        // X축만 제어
+        velocity.x = _moveDirection.x * _runSpeed * _moveSpeedMultiplier;
         _rigidbody.linearVelocity = velocity;
     }
 
     void OnJumpStarted()
     {
-        if (_collisionChecker == null || !_collisionChecker.IsGrounded) return;
+        // Move.State 확인
+        if (!_isMovable)
+            return;
+
+        // 지면에서만 점프 가능
+        if (_collisionChecker == null || !_collisionChecker.IsGrounded)
+            return;
 
         Vector2 velocity = _rigidbody.linearVelocity;
         velocity.y = _jumpVelocity;
@@ -102,6 +120,9 @@ public class PlayerMove : MonoBehaviour
 
     void OnJumpCanceled()
     {
+        if (!_isMovable)
+            return;
+
         // 상승 중일 때, Jump Cut 적용
         if (_rigidbody.linearVelocity.y > 0f)
         {
@@ -110,5 +131,12 @@ public class PlayerMove : MonoBehaviour
 
             _rigidbody.linearVelocity = velocity;
         }
+    }
+
+    public void AnimEvent_StopMove()
+    {
+        Vector2 velocity = _rigidbody.linearVelocity;
+        velocity.x = 0f;
+        _rigidbody.linearVelocity = velocity;
     }
 }

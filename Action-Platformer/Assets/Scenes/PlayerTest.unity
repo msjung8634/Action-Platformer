@@ -835,9 +835,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1221954054}
   - component: {fileID: 1221954056}
-  - component: {fileID: 1221954057}
   m_Layer: 0
-  m_Name: Visual
+  m_Name: Renderer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -917,28 +916,6 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
---- !u!95 &1221954057
-Animator:
-  serializedVersion: 7
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1221954053}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: ffcfa764355e5574d8a4f44504905d6e, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_AnimatePhysics: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &1258072854
 GameObject:
   m_ObjectHideFlags: 0
@@ -1317,10 +1294,12 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2010260586}
+  - component: {fileID: 2010260593}
   - component: {fileID: 2010260587}
-  - component: {fileID: 2010260590}
   - component: {fileID: 2010260588}
-  - component: {fileID: 2010260589}
+  - component: {fileID: 2010260590}
+  - component: {fileID: 2010260591}
+  - component: {fileID: 2010260592}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -1341,6 +1320,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 2049172507}
   - {fileID: 875032892}
   - {fileID: 1221954054}
   m_Father: {fileID: 0}
@@ -1384,27 +1364,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b9021b213cbda33428a03b86db58cfed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerInput
-  moveAction: {fileID: 2109562572368742197, guid: 8f2d44588148b0c4a815fef77082d50b, type: 3}
-  jumpAction: {fileID: -8070364844885723131, guid: 8f2d44588148b0c4a815fef77082d50b, type: 3}
---- !u!114 &2010260589
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2010260585}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c387714f68a4c124aa79604ef5a50844, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: '::'
-  _collisionChecker: {fileID: 875032894}
-  _runSpeed: 4
-  _walkSpeedMultiplier: 0.5
-  _idleThreshold: 0.01
-  _walkThreshold: 0.4
-  _jumpVelocity: 20
-  _jumpCutMultiplier: 0.4
+  _move: {fileID: 2109562572368742197, guid: 8f2d44588148b0c4a815fef77082d50b, type: 3}
+  _jump: {fileID: -8070364844885723131, guid: 8f2d44588148b0c4a815fef77082d50b, type: 3}
+  _attack: {fileID: -4847043533535628777, guid: 8f2d44588148b0c4a815fef77082d50b, type: 3}
+  _parry: {fileID: 1550966855511711866, guid: 8f2d44588148b0c4a815fef77082d50b, type: 3}
+  _dodge: {fileID: -5825212199925704725, guid: 8f2d44588148b0c4a815fef77082d50b, type: 3}
 --- !u!114 &2010260590
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1418,7 +1382,156 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   _renderer: {fileID: 1221954056}
-  _animator: {fileID: 1221954057}
+  _animator: {fileID: 2010260593}
+--- !u!114 &2010260591
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2010260585}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c387714f68a4c124aa79604ef5a50844, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
+  _playerInput: {fileID: 2010260588}
+  _rigidbody: {fileID: 2010260587}
+  _collisionChecker: {fileID: 875032894}
+  _stateMachine: {fileID: 2049172509}
+  _playerVisual: {fileID: 2010260590}
+  _runSpeed: 4
+  _walkSpeedMultiplier: 0.5
+  _idleThreshold: 0.01
+  _walkThreshold: 0.4
+  _jumpVelocity: 20
+  _jumpCutMultiplier: 0.4
+--- !u!114 &2010260592
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2010260585}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 824e2a2926fc93d4294b9b5400e5d0c2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerCombatController
+  _playerInput: {fileID: 2010260588}
+  _rigidbody: {fileID: 2010260587}
+  _collisionChecker: {fileID: 875032894}
+  _stateMachine: {fileID: 2049172509}
+  _playerVisual: {fileID: 2010260590}
+  _attackInputBufferTime: 0.5
+--- !u!95 &2010260593
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2010260585}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: ffcfa764355e5574d8a4f44504905d6e, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
+--- !u!1 &2049172506
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2049172507}
+  - component: {fileID: 2049172509}
+  - component: {fileID: 2049172512}
+  - component: {fileID: 2049172511}
+  - component: {fileID: 2049172510}
+  m_Layer: 0
+  m_Name: StateMachine
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2049172507
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2049172506}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2010260586}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2049172509
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2049172506}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ad641b19536426940855b727435fa92b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
+--- !u!114 &2049172510
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2049172506}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0fbcd67e687351144afc1115df207a31, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Hit
+  <CurrentState>k__BackingField: 0
+--- !u!114 &2049172511
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2049172506}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 61fcb44f3dfc4b44282a74e732801651, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Attack
+  <CurrentState>k__BackingField: 0
+--- !u!114 &2049172512
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2049172506}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1343921a45838344f86b6b3438a9944b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Move
+  <CurrentState>k__BackingField: 0
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

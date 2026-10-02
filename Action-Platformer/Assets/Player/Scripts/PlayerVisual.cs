@@ -20,9 +20,17 @@ public class PlayerVisual : MonoBehaviour
         }
     }
 
-    static readonly int _moveSpeedHash = Animator.StringToHash("MoveSpeed");
+    static readonly int _moveSpeedHash = Animator.StringToHash("moveSpeed");
     public void SetMoveSpeed(float speed)
     {
         _animator.SetFloat(_moveSpeedHash, speed);
+    }
+
+    static readonly int _groundAattackHash = Animator.StringToHash("groundAttack");
+    static readonly int _comboIndexHash = Animator.StringToHash("comboIndex");
+    public void PlayGroundAttack(int comboIndex)
+    {
+        _animator.SetInteger(_comboIndexHash, comboIndex);
+        _animator.SetTrigger(_groundAattackHash);
     }
 }
