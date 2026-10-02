@@ -5,9 +5,10 @@ public class PlayerCombatController : MonoBehaviour
     [Header("Refrences")]
     [SerializeField] PlayerInput _playerInput;
     [SerializeField] Rigidbody2D _rigidbody;
-    [SerializeField] CollisionChecker _collisionChecker;
+    [SerializeField] EnvironmentChecker _environmentChecker;
     [SerializeField] UnitStateMachine _stateMachine;
     [SerializeField] PlayerVisual _playerVisual;
+    [SerializeField] PlayerHitboxManager _playerHitboxManager;
 
     bool _isAttackable => _stateMachine?.Attack?.CurrentState.Equals(Attack.State.Attackable) ?? false;
 
@@ -17,7 +18,7 @@ public class PlayerCombatController : MonoBehaviour
     bool _isAttacking;
     bool _isComboWindowOpen;
     bool _isComboBuffered;
-    [SerializeField] float _attackInputBufferTime = 0.5f;
+    [SerializeField] float _attackInputBufferTime = 0.4f;
     float _attackInputBufferTimer;
 
     [Header("Parry")]
@@ -60,7 +61,7 @@ public class PlayerCombatController : MonoBehaviour
             if (!_isAttackable)
                 return;
 
-            if (_collisionChecker.IsGrounded)
+            if (_environmentChecker.IsGrounded)
             {
                 StartGroundAttack();
             }
@@ -103,7 +104,7 @@ public class PlayerCombatController : MonoBehaviour
         _playerVisual.PlayGroundAttack(_comboIndex);
     }
 
-    public void AnimEvent_OpenComboWindow()
+    void AnimEvent_OpenComboWindow()
     {
         _isComboWindowOpen = true;
 
@@ -114,12 +115,12 @@ public class PlayerCombatController : MonoBehaviour
         }
     }
 
-    public void AnimEvent_CloseComboWindow()
+    void AnimEvent_CloseComboWindow()
     {
         _isComboWindowOpen = false;
     }
 
-    public void AnimEvent_GroundAttackEnd()
+    void AnimEvent_GroundAttackEnd()
     {
         if (_isComboBuffered && _comboIndex < _maxCombo)
         {
@@ -142,6 +143,21 @@ public class PlayerCombatController : MonoBehaviour
         _attackInputBufferTimer = 0f;
 
         _stateMachine.SetState(new NormalState());
+    }
+
+    void AnimEvent_CheckGroundAttack0Hit()
+    {
+        _playerHitboxManager.CheckGroundAttack0();
+    }
+
+    void AnimEvent_CheckGroundAttack1Hit()
+    {
+        _playerHitboxManager.CheckGroundAttack1();
+    }
+
+    void AnimEvent_CheckGroundAttack2Hit()
+    {
+        _playerHitboxManager.CheckGroundAttack2();
     }
 
     #endregion

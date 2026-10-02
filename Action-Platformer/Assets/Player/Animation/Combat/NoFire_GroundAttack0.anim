@@ -86,8 +86,15 @@ AnimationClip:
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
-  - time: 0
-    functionName: AnimEvent_StopMove
+  - time: 0.083333336
+    functionName: AnimEvent_CheckGroundAttack0Hit
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
+  - time: 0.16666667
+    functionName: AnimEvent_CheckGroundAttack0Hit
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0

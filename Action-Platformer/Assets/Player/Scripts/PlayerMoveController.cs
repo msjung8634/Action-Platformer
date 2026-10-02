@@ -6,9 +6,10 @@ public class PlayerMoveController : MonoBehaviour
     [Header("Refrences")]
     [SerializeField] PlayerInput _playerInput;
     [SerializeField] Rigidbody2D _rigidbody;
-    [SerializeField] CollisionChecker _collisionChecker;
+    [SerializeField] EnvironmentChecker _environmentChecker;
     [SerializeField] UnitStateMachine _stateMachine;
     [SerializeField] PlayerVisual _playerVisual;
+    [SerializeField] PlayerHitboxManager _playerHitboxManager;
 
     [Header("Move Speed")]
     [SerializeField] float _runSpeed = 5f;
@@ -53,6 +54,7 @@ public class PlayerMoveController : MonoBehaviour
         _moveDirection = GetMoveVector(desiredDirection);
 
         _playerVisual.SetFacingDirection(desiredDirection);
+        _playerHitboxManager.SetFacingDirection(desiredDirection);
 
         float inputMagnitude = Mathf.Abs(_playerInput.RawInput.x);
         // Idle [0.0 ~ _idleThreshold]
@@ -109,7 +111,7 @@ public class PlayerMoveController : MonoBehaviour
             return;
 
         // 지면에서만 점프 가능
-        if (_collisionChecker == null || !_collisionChecker.IsGrounded)
+        if (_environmentChecker == null || !_environmentChecker.IsGrounded)
             return;
 
         Vector2 velocity = _rigidbody.linearVelocity;
@@ -131,12 +133,5 @@ public class PlayerMoveController : MonoBehaviour
 
             _rigidbody.linearVelocity = velocity;
         }
-    }
-
-    public void AnimEvent_StopMove()
-    {
-        Vector2 velocity = _rigidbody.linearVelocity;
-        velocity.x = 0f;
-        _rigidbody.linearVelocity = velocity;
     }
 }

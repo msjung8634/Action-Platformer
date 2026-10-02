@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class CollisionChecker : MonoBehaviour
+public class EnvironmentChecker : MonoBehaviour
 {
     [Header("Ground Check")]
     [SerializeField] LayerMask _groundLayer;
@@ -40,11 +40,11 @@ public class CollisionChecker : MonoBehaviour
         );
     }
 
-    private void OnDrawGizmosSelected()
+    void OnDrawGizmosSelected()
     {
         if (_groundCheck != null)
         {
-            Gizmos.color = Color.green;
+            Gizmos.color = Color.yellow;
             Gizmos.DrawWireSphere(
                 _groundCheck.position,
                 _groundCheckRadius
