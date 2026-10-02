@@ -56,10 +56,7 @@ public class PlayerHitboxManager : MonoBehaviour
         );
 
         if (hits.Length == 0)
-        {
-            Debug.Log($"No Hit");
             return;
-        }
 
         foreach (Collider2D hit in hits)
         {
