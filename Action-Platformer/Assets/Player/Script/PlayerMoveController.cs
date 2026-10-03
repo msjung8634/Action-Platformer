@@ -30,9 +30,10 @@ public class PlayerMoveController : MonoBehaviour
     [SerializeField] float _apexGravity = 6f;
     [SerializeField] float _descendGravity = 9f;
     [SerializeField] float _apexThreshold = 1f;
-    [SerializeField] JumpPhase _jumpPhase = JumpPhase.Grounded;
+    [SerializeField] JumpPhase _jumpPhase = JumpPhase.None;
     enum JumpPhase
     {
+        None,
         Grounded,
         Ascend,
         Apex,
@@ -262,7 +263,7 @@ public class PlayerMoveController : MonoBehaviour
     }
 
     #endregion
-    #region Dodge
+    #region Dash
 
     void OnDodgePerformed()
     {
@@ -271,7 +272,7 @@ public class PlayerMoveController : MonoBehaviour
 
         if (_playerCombatController.IsAttacking)
         {
-            _playerCombatController.EndCombo();
+            _playerCombatController.CancelAttack();
         }
 
         _playerVisual.PlayDodge();

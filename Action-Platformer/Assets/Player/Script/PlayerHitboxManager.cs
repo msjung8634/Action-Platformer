@@ -7,17 +7,35 @@ public class PlayerHitboxManager : MonoBehaviour
     [Header("Attack Hitboxes")]
     [SerializeField] LayerMask _attackTargetLayer;
     [Space(10)]
-    [SerializeField] Transform _gAttack0_Center;
-    [SerializeField] Vector2 _gAttack0_Size = new(0.1f, 0.8f);
-    [SerializeField] AttackData _gAttack0Data;
+
+    [Header("Combo Attack")]
+    [SerializeField] Transform _comboAttack1_Center;
+    [SerializeField] Vector2 _comboAttack1_Size = new(0.6f, 0.8f);
+    [SerializeField] AttackData _comboAttack1_Data;
     [Space(10)]
-    [SerializeField] Transform _gAttack1_Center;
-    [SerializeField] Vector2 _gAttack1_Size = new(0.1f, 0.8f);
-    [SerializeField] AttackData _gAttack1Data;
+    [SerializeField] Transform _comboAttack2_Center;
+    [SerializeField] Vector2 _comboAttack2_Size = new(0.74f, 1f);
+    [SerializeField] AttackData _comboAttack2_Data;
     [Space(10)]
-    [SerializeField] Transform _gAttack2_Center;
-    [SerializeField] Vector2 _gAttack2_Size = new(0.1f, 0.8f);
-    [SerializeField] AttackData _gAttack2Data;
+    [SerializeField] Transform _comboAttack3_Center;
+    [SerializeField] Vector2 _comboAttack3_Size = new(1.6f, 0.6f);
+    [SerializeField] AttackData _comboAttack3_Data;
+
+    [Header("InAir Attack")]
+    [SerializeField] Transform _inAirAttack_Center;
+    [SerializeField] Vector2 _inAirAttack_Size = new(0.1f, 0.8f);
+    [SerializeField] AttackData _inAirAttack_Data;
+
+    [Header("Dash Attack")]
+    [SerializeField] Transform _dashAttack_Center;
+    [SerializeField] Vector2 _dashAttack_Size = new(0.1f, 0.8f);
+    [SerializeField] AttackData _dashAttack_Data;
+
+    HashSet<IDamageable> _hitTargetCache = new();
+    public void ClearCachedTarget()
+    {
+        _hitTargetCache.Clear();
+    }
 
     public void SetFacingDirection(PlayerInput.MoveDirection direction)
     {
@@ -32,31 +50,7 @@ public class PlayerHitboxManager : MonoBehaviour
         }
     }
 
-    #region GroundAttack
-
-    public void CheckGroundAttack0()
-    {
-        CheckGroundAttack(_gAttack0_Center, _gAttack0_Size, _gAttack0Data);
-    }
-
-    public void CheckGroundAttack1()
-    {
-        CheckGroundAttack(_gAttack1_Center, _gAttack1_Size, _gAttack1Data);
-    }
-
-    public void CheckGroundAttack2()
-    {
-        CheckGroundAttack(_gAttack2_Center, _gAttack2_Size, _gAttack2Data);
-    }
-
-    HashSet<IDamageable> _hitTargetCache = new();
-
-    public void ClearCachedTarget()
-    {
-        _hitTargetCache.Clear();
-    }
-
-    void CheckGroundAttack(Transform center, Vector2 size, AttackData attackData)
+    void CheckAttackHit(Transform center, Vector2 size, AttackData attackData)
     {
         Collider2D[] enemyHitboxes = Physics2D.OverlapBoxAll(center.position, size, 0f, _attackTargetLayer);
         if (enemyHitboxes.Length == 0)
@@ -89,7 +83,43 @@ public class PlayerHitboxManager : MonoBehaviour
         }
     }
 
+    #region ComboAttack
+
+    public void CheckComboAttack1()
+    {
+        CheckAttackHit(_comboAttack1_Center, _comboAttack1_Size, _comboAttack1_Data);
+    }
+
+    public void CheckComboAttack2()
+    {
+        CheckAttackHit(_comboAttack2_Center, _comboAttack2_Size, _comboAttack2_Data);
+    }
+
+    public void CheckComboAttack3()
+    {
+        CheckAttackHit(_comboAttack3_Center, _comboAttack3_Size, _comboAttack3_Data);
+    }
+
     #endregion
+
+    #region DashAttack
+
+    public void CheckDashAttack()
+    {
+        CheckAttackHit(_dashAttack_Center, _dashAttack_Size, _dashAttack_Data);
+    }
+
+    #endregion
+
+    #region InAirAttack
+
+    public void CheckInAirAttack()
+    {
+        CheckAttackHit(_inAirAttack_Center, _inAirAttack_Size, _inAirAttack_Data);
+    }
+
+    #endregion
+
 
 #if UNITY_EDITOR
     void OnDrawGizmos()
@@ -101,28 +131,42 @@ public class PlayerHitboxManager : MonoBehaviour
 
         if (selected == transform)
         {
-            DrawHitbox(_gAttack0_Center, _gAttack0_Size);
-            DrawHitbox(_gAttack1_Center, _gAttack1_Size);
-            DrawHitbox(_gAttack2_Center, _gAttack2_Size);
+            DrawHitbox(_comboAttack1_Center, _comboAttack1_Size);
+            DrawHitbox(_comboAttack2_Center, _comboAttack2_Size);
+            DrawHitbox(_comboAttack3_Center, _comboAttack3_Size);
+            DrawHitbox(_inAirAttack_Center, _inAirAttack_Size);
+            DrawHitbox(_dashAttack_Center, _dashAttack_Size);
             return;
         }
 
-        if (_gAttack0_Center != null &&
-            Selection.Contains(_gAttack0_Center.gameObject))
+        if (_comboAttack1_Center != null &&
+            Selection.Contains(_comboAttack1_Center.gameObject))
         {
-            DrawHitbox(_gAttack0_Center, _gAttack0_Size);
+            DrawHitbox(_comboAttack1_Center, _comboAttack1_Size);
         }
 
-        if (_gAttack1_Center != null &&
-            Selection.Contains(_gAttack1_Center.gameObject))
+        if (_comboAttack2_Center != null &&
+            Selection.Contains(_comboAttack2_Center.gameObject))
         {
-            DrawHitbox(_gAttack1_Center, _gAttack1_Size);
+            DrawHitbox(_comboAttack2_Center, _comboAttack2_Size);
         }
 
-        if (_gAttack2_Center != null &&
-            Selection.Contains(_gAttack2_Center.gameObject))
+        if (_comboAttack3_Center != null &&
+            Selection.Contains(_comboAttack3_Center.gameObject))
         {
-            DrawHitbox(_gAttack2_Center, _gAttack2_Size);
+            DrawHitbox(_comboAttack3_Center, _comboAttack3_Size);
+        }
+
+        if (_inAirAttack_Center != null &&
+            Selection.Contains(_inAirAttack_Center.gameObject))
+        {
+            DrawHitbox(_inAirAttack_Center, _inAirAttack_Size);
+        }
+
+        if (_dashAttack_Center != null &&
+            Selection.Contains(_dashAttack_Center.gameObject))
+        {
+            DrawHitbox(_dashAttack_Center, _dashAttack_Size);
         }
     }
 

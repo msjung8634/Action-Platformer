@@ -46,12 +46,24 @@ public class PlayerVisual : MonoBehaviour
         _animator.SetTrigger(_landHash);
     }
 
-    static readonly int _groundAattackHash = Animator.StringToHash("groundAttack");
+    static readonly int _comboAttackHash = Animator.StringToHash("comboAttack");
     static readonly int _comboIndexHash = Animator.StringToHash("comboIndex");
-    public void PlayGroundAttack(int comboIndex)
+    public void PlayComboAttack(int comboIndex)
     {
+        _animator.SetTrigger(_comboAttackHash);
         _animator.SetInteger(_comboIndexHash, comboIndex);
-        _animator.SetTrigger(_groundAattackHash);
+    }
+
+    static readonly int _dashAttackHash = Animator.StringToHash("dashAttack");
+    public void SetDashAttack(bool value)
+    {
+        _animator.SetBool(_dashAttackHash, value);
+    }
+
+    static readonly int _inAirAttackHash = Animator.StringToHash("inAirAttack");
+    public void PlayInAirAttack()
+    {
+        _animator.SetTrigger(_inAirAttackHash);
     }
 
     static readonly int _dodgeHash = Animator.StringToHash("dodge");

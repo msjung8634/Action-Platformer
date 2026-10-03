@@ -934,7 +934,7 @@ GameObject:
   m_Component:
   - component: {fileID: 587185741}
   m_Layer: 0
-  m_Name: GroundAttack0
+  m_Name: ComboAttack1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1199,6 +1199,8 @@ Transform:
   - {fileID: 587185741}
   - {fileID: 1844137341}
   - {fileID: 1422301577}
+  - {fileID: 822610554}
+  - {fileID: 2068342730}
   m_Father: {fileID: 2010260586}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &775292688
@@ -1216,15 +1218,52 @@ MonoBehaviour:
   _attackTargetLayer:
     serializedVersion: 2
     m_Bits: 256
-  _gAttack0_Center: {fileID: 587185741}
-  _gAttack0_Size: {x: 0.6, y: 0.8}
-  _gAttack0Data: {fileID: 11400000, guid: 74121391a6b0cd641b345c9a59ce0d92, type: 2}
-  _gAttack1_Center: {fileID: 1844137341}
-  _gAttack1_Size: {x: 0.74, y: 1}
-  _gAttack1Data: {fileID: 11400000, guid: 693bdbafe05e5834f865e8f64ee25da1, type: 2}
-  _gAttack2_Center: {fileID: 1422301577}
-  _gAttack2_Size: {x: 0.95, y: 0.4}
-  _gAttack2Data: {fileID: 11400000, guid: 3d5cee76b03ef0d43843fdd201de8a2a, type: 2}
+  _comboAttack1_Center: {fileID: 587185741}
+  _comboAttack1_Size: {x: 0.6, y: 0.8}
+  _comboAttack1_Data: {fileID: 11400000, guid: 74121391a6b0cd641b345c9a59ce0d92, type: 2}
+  _comboAttack2_Center: {fileID: 1844137341}
+  _comboAttack2_Size: {x: 0.74, y: 1}
+  _comboAttack2_Data: {fileID: 11400000, guid: 693bdbafe05e5834f865e8f64ee25da1, type: 2}
+  _comboAttack3_Center: {fileID: 1422301577}
+  _comboAttack3_Size: {x: 1.6, y: 0.6}
+  _comboAttack3_Data: {fileID: 11400000, guid: 3d5cee76b03ef0d43843fdd201de8a2a, type: 2}
+  _inAirAttack_Center: {fileID: 2068342730}
+  _inAirAttack_Size: {x: 0.64, y: 0.8}
+  _inAirAttack_Data: {fileID: 11400000, guid: a10f8c7d33023c249a60d112f10c7a63, type: 2}
+  _dashAttack_Center: {fileID: 822610554}
+  _dashAttack_Size: {x: 0.9, y: 0.32}
+  _dashAttack_Data: {fileID: 11400000, guid: b0e60019a6ac3ed4ba732fef08f7c3ed, type: 2}
+--- !u!1 &822610553
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 822610554}
+  m_Layer: 0
+  m_Name: DashAttack
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &822610554
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 822610553}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.484, y: 0.292, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 775292687}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &825617820
 GameObject:
   m_ObjectHideFlags: 0
@@ -2059,7 +2098,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1422301577}
   m_Layer: 0
-  m_Name: GroundAttack2
+  m_Name: ComboAttack3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2074,7 +2113,7 @@ Transform:
   m_GameObject: {fileID: 1422301576}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.504, y: 0.301, z: 0}
+  m_LocalPosition: {x: -0.1, y: 0.2, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2510,7 +2549,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1844137341}
   m_Layer: 0
-  m_Name: GroundAttack1
+  m_Name: ComboAttack2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2974,7 +3013,8 @@ MonoBehaviour:
   _environmentChecker: {fileID: 875032894}
   _stateMachine: {fileID: 2049172509}
   _playerHitboxManager: {fileID: 775292688}
-  _attackInputBufferTime: 0.4
+  _maxCombo: 3
+  _comboAttackInputBufferTime: 0.4
 --- !u!95 &2010260593
 Animator:
   serializedVersion: 7
@@ -3139,6 +3179,37 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Move
   <CurrentState>k__BackingField: 0
+--- !u!1 &2068342729
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2068342730}
+  m_Layer: 0
+  m_Name: InAirAttack
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2068342730
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2068342729}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.223, y: 0.391, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 775292687}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

@@ -14,16 +14,15 @@ public class PlayerCombatController : MonoBehaviour
     [SerializeField] PlayerHitboxManager _playerHitboxManager;
 
     bool _isAttackable => _stateMachine?.Attack?.CurrentState.Equals(Attack.State.Attackable) ?? false;
-
-    [Header("GroundAttack")]
-    int _maxCombo = 3;
-    int _comboIndex = -1;
     public bool IsAttacking { get; private set; }
 
+    [Header("ComboAttack")]
+    [SerializeField] int _maxCombo = 3;
+    [SerializeField] float _comboAttackInputBufferTime = 0.4f;
+    int _comboIndex = -1;
     bool _isComboWindowOpen;
     bool _isComboBuffered;
-    [SerializeField] float _attackInputBufferTime = 0.4f;
-    float _attackInputBufferTimer;
+    float _comboAttackInputBufferTimer;
 
     [Header("Parry")]
     bool b;
@@ -55,74 +54,121 @@ public class PlayerCombatController : MonoBehaviour
 
     void Update()
     {
-        if (_attackInputBufferTimer > 0f)
-        {
-            _attackInputBufferTimer = Mathf.Max(_attackInputBufferTimer - Time.deltaTime, 0f);
-        }
+        UpdateAttackInputBuffer();
     }
 
-    #region Attack
+    #region Handle Attack Input
 
     void OnAttackPerformed()
     {
-        // 공격 중이 아니라면 1타 시작
-        if (!IsAttacking)
+        // 공격 중이면 콤보저장 시도
+        if (IsAttacking)
         {
-            if (!_isAttackable)
-                return;
-
-            if (_environmentChecker.IsGrounded)
-            {
-                StartGroundAttack();
-            }
-
+            // TODO : DashAttack, InAirAttack은 콤보가 없는 상태이므로 수정필요
+            TryBufferComboInput();
             return;
         }
 
-        // 마지막 콤보라면 무시
-        if (_comboIndex >= _maxCombo - 1)
+        if (!_isAttackable)
             return;
 
-        // 콤보 입력 가능 구간이라면 즉시 예약
+        if (_playerMoveController.IsDodging)
+        {
+            StartDashAttack();
+            return;
+        }
+
+        if (_environmentChecker.IsGrounded)
+        {
+            StartComboAttack();
+            return;
+        }
+        
+        StartInAirAttack();
+    }
+
+    void UpdateAttackInputBuffer()
+    {
+        if (_comboAttackInputBufferTimer <= 0f)
+            return;
+
+        _comboAttackInputBufferTimer =
+            Mathf.Max(_comboAttackInputBufferTimer - Time.deltaTime, 0f);
+    }
+
+    #endregion
+
+    #region Attack Common 
+
+    void BeginAttack()
+    {
+        IsAttacking = true;
+        _stateMachine.SetState(new AttackState());
+        _playerHitboxManager.ClearCachedTarget();
+    }
+
+    void EndAttack()
+    {
+        IsAttacking = false;
+        _stateMachine.SetState(new NormalState());
+    }
+
+    public void CancelAttack()
+    {
+        IsAttacking = false;
+        ResetCombo();
+
+        _playerVisual.SetDashAttack(false);
+    }
+
+    #endregion
+
+    #region ComboAttack
+
+    void StartComboAttack()
+    {
+        if (!IsAttacking)
+        {
+            BeginAttack();
+        }
+
+        ResetComboInput();
+        _playerHitboxManager.ClearCachedTarget();
+        _playerVisual.PlayComboAttack(++_comboIndex);
+    }
+
+    void ResetComboInput()
+    {
+        _isComboWindowOpen = false;
+        _isComboBuffered = false;
+        _comboAttackInputBufferTimer = 0f;
+    }
+
+    void TryBufferComboInput()
+    {
+        // ComboAttack 아니거나, 마지막 콤보면 무시
+        if (_comboIndex < 0 || _comboIndex >= _maxCombo - 1)
+            return;
+
+        // Combo Window 열려있으면 예약
         if (_isComboWindowOpen)
         {
             _isComboBuffered = true;
             return;
         }
 
-        // 입력을 일정 시간 기억
-        _attackInputBufferTimer = _attackInputBufferTime;
-    }
-
-    #region GroundAttack
-
-    void StartGroundAttack()
-    {
-        if (!IsAttacking)
-        {
-            IsAttacking = true;
-            _stateMachine.SetState(new AttackState());
-        }
-        
-        _isComboWindowOpen = false;
-        _isComboBuffered = false;
-
-        _attackInputBufferTimer = 0f;
-
-        _comboIndex++;
-        _playerHitboxManager.ClearCachedTarget();
-
-        _playerVisual.PlayGroundAttack(_comboIndex);
+        // Combo Window 닫혀있다면 일정 시간 입력 기억
+        _comboAttackInputBufferTimer = _comboAttackInputBufferTime;
     }
 
     void AnimEvent_OpenComboWindow()
     {
         _isComboWindowOpen = true;
 
-        if (_attackInputBufferTimer > 0f)
+        if (_comboAttackInputBufferTimer > 0f)
         {
             _isComboBuffered = true;
-            _attackInputBufferTimer = 0f;
+            _comboAttackInputBufferTimer = 0f;
         }
     }
 
@@ -131,46 +177,87 @@ public class PlayerCombatController : MonoBehaviour
         _isComboWindowOpen = false;
     }
 
-    void AnimEvent_GroundAttackEnd()
+    void AnimEvent_ComboAttackEnd()
     {
         if (_isComboBuffered && _comboIndex < _maxCombo - 1)
         {
-            StartGroundAttack();
+            StartComboAttack();
             return;
         }
 
-        EndCombo();
-        _stateMachine.SetState(new NormalState());
+        ResetCombo();
+        EndAttack();
     }
 
-    public void EndCombo()
+    public void ResetCombo()
     {
-        IsAttacking = false;
-
         _comboIndex = -1;
-
-        _isComboWindowOpen = false;
-        _isComboBuffered = false;
-
-        _attackInputBufferTimer = 0f;
+        ResetComboInput();
     }
 
-    void AnimEvent_CheckGroundAttack0Hit()
+    void AnimEvent_CheckComboAttack1Hit()
     {
-        _playerHitboxManager.CheckGroundAttack0();
+        _playerHitboxManager.CheckComboAttack1();
     }
 
-    void AnimEvent_CheckGroundAttack1Hit()
+    void AnimEvent_CheckComboAttack2Hit()
     {
-        _playerHitboxManager.CheckGroundAttack1();
+        _playerHitboxManager.CheckComboAttack2();
     }
 
-    void AnimEvent_CheckGroundAttack2Hit()
+    void AnimEvent_CheckComboAttack3Hit()
     {
-        _playerHitboxManager.CheckGroundAttack2();
+        _playerHitboxManager.CheckComboAttack3();
     }
 
     #endregion
+
+    #region DashAttack
+
+    void StartDashAttack()
+    {
+        _playerVisual.SetDashAttack(true);
+    }
+
+    void AnimEvent_DashAttackStart()
+    {
+        BeginAttack();
+    }
+
+    void AnimEvent_CheckDashAttackHit()
+    {
+        _playerHitboxManager.CheckDashAttack();
+    }
+
+    void AnimEvent_DashAttackEnd()
+    {
+        EndAttack();
+        _playerVisual.SetDashAttack(false);
+    }
+
+    #endregion
+
+    #region InAirAttack
+
+    void StartInAirAttack()
+    {
+        _playerVisual.PlayInAirAttack();
+    }
+
+    void AnimEvent_InAirAttackStart()
+    {
+        BeginAttack();
+    }
+
+    void AnimEvent_CheckInAirAttackHit()
+    {
+        _playerHitboxManager.CheckInAirAttack();
+    }
+
+    void AnimEvent_InAirAttackEnd()
+    {
+        EndAttack();
+    }
 
     #endregion
 

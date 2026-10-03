@@ -6,7 +6,7 @@ AnimationClip:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: NoFire_GroundAttack1
+  m_Name: NoFire_ComboAttack_2
   serializedVersion: 7
   m_Legacy: 0
   m_Compressed: 0
@@ -87,14 +87,14 @@ AnimationClip:
     intParameter: 0
     messageOptions: 0
   - time: 0.083333336
-    functionName: AnimEvent_CheckGroundAttack1Hit
+    functionName: AnimEvent_CheckComboAttack2Hit
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
   - time: 0.16666667
-    functionName: AnimEvent_CheckGroundAttack1Hit
+    functionName: AnimEvent_CheckComboAttack2Hit
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
@@ -108,7 +108,7 @@ AnimationClip:
     intParameter: 0
     messageOptions: 0
   - time: 0.25
-    functionName: AnimEvent_GroundAttackEnd
+    functionName: AnimEvent_ComboAttackEnd
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
