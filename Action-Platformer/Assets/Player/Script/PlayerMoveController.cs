@@ -1,4 +1,6 @@
+using Cysharp.Threading.Tasks;
 using System;
+using System.Threading;
 using UnityEngine;
 
 public class PlayerMoveController : MonoBehaviour
@@ -28,7 +30,7 @@ public class PlayerMoveController : MonoBehaviour
     [Header("Jump Gravity")]
     [SerializeField] float _ascendGravity = 7f;
     [SerializeField] float _apexGravity = 6f;
-    [SerializeField] float _descendGravity = 9f;
+    [SerializeField] float _descendGravity = 4f;
     [SerializeField] float _apexThreshold = 1f;
     [SerializeField] JumpPhase _jumpPhase = JumpPhase.None;
     enum JumpPhase
@@ -44,6 +46,10 @@ public class PlayerMoveController : MonoBehaviour
     [SerializeField] float _dodgeSpeed = 8f;
     [SerializeField] float _dodgeSpeedMultiplier = 1f; // Animation Curve로 조정
     public bool IsDodging { get; private set; }
+
+    [Header("InAirAttackTime")]
+    public bool IsAirAttacking { get; private set; }
+    [SerializeField] float _airAttackStopDuration = 0.1f;
 
     float _originalGravityScale;
     Vector2 _moveDirection;
@@ -140,6 +146,13 @@ public class PlayerMoveController : MonoBehaviour
             return;
         }
 
+        // inAirAttack
+        if (IsAirAttacking)
+        {
+            _rigidbody.linearVelocity = Vector2.zero;
+            return;
+        }
+
         // y velocity
         UpdateJumpPhase();
         UpdateJumpGravity();
@@ -233,6 +246,7 @@ public class PlayerMoveController : MonoBehaviour
                 break;
 
             case JumpPhase.Grounded:
+                _playerVisual.ResetInAirAttack();
                 _playerVisual.PlayLand();
                 break;
         }
@@ -334,6 +348,49 @@ public class PlayerMoveController : MonoBehaviour
 
         _rigidbody.linearVelocity = Vector2.zero;
         _rigidbody.gravityScale = _originalGravityScale;
+    }
+
+    #endregion
+    #region InAirAttackTime
+
+    CancellationTokenSource _airAttackTimeCts;
+    public void StartAirAttackTime()
+    {
+        if (_environmentChecker.IsGrounded)
+            return;
+
+        _airAttackTimeCts?.Cancel();
+        _airAttackTimeCts?.Dispose();
+        _airAttackTimeCts = CancellationTokenSource.CreateLinkedTokenSource(destroyCancellationToken);
+        StartAirAttakTimeAsync().Forget();
+    }
+    async UniTask StartAirAttakTimeAsync()
+    {
+        IsAirAttacking = true;
+
+        // TODO : 일시정지 말고 좋은 방법으로 변경?
+        _rigidbody.linearVelocity = Vector2.zero;
+        _rigidbody.gravityScale = 0f;
+
+        await UniTask.Delay(
+            TimeSpan.FromSeconds(_airAttackStopDuration),
+            DelayType.Realtime,
+            cancellationToken: destroyCancellationToken
+        );
+
+        EndAirAttackTime();
+    }
+    public void EndAirAttackTime()
+    {
+        _airAttackTimeCts?.Cancel();
+        _airAttackTimeCts?.Dispose();
+        _airAttackTimeCts = null;
+
+        IsAirAttacking = false;
+
+        // 이후 JumpPhase에 따라 중력이 다시 결정됨
+        UpdateJumpPhase();
+        UpdateJumpGravity();
     }
 
     #endregion

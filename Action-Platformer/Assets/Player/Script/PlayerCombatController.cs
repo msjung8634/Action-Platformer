@@ -42,6 +42,9 @@ public class PlayerCombatController : MonoBehaviour
             return;
 
         _playerInput.AttackPerformed += OnAttackPerformed;
+        _playerInput.FireBreathPerformed += OnFireBreathPerformed;
+        _playerInput.FireBallPerformed += OnFireBallPerformed;
+        _playerInput.IgniteSwordPerformed += OnIgniteSwordPerformed;
     }
 
     void OnDisable()
@@ -50,6 +53,9 @@ public class PlayerCombatController : MonoBehaviour
             return;
 
         _playerInput.AttackPerformed -= OnAttackPerformed;
+        _playerInput.FireBallPerformed -= OnFireBallPerformed;
+        _playerInput.FireBreathPerformed -= OnFireBreathPerformed;
+        _playerInput.IgniteSwordPerformed -= OnIgniteSwordPerformed;
     }
 
     void Update()
@@ -57,7 +63,9 @@ public class PlayerCombatController : MonoBehaviour
         UpdateAttackInputBuffer();
     }
 
-    #region Handle Attack Input
+    #region Attack(Sword)
+
+    #region HandleAttackInput
 
     void OnAttackPerformed()
     {
@@ -92,12 +100,10 @@ public class PlayerCombatController : MonoBehaviour
         if (_comboAttackInputBufferTimer <= 0f)
             return;
 
-        _comboAttackInputBufferTimer =
-            Mathf.Max(_comboAttackInputBufferTimer - Time.deltaTime, 0f);
+        _comboAttackInputBufferTimer = Mathf.Max(_comboAttackInputBufferTimer - Time.deltaTime, 0f);
     }
 
     #endregion
-
     #region Attack Common 
 
     void BeginAttack()
@@ -117,8 +123,8 @@ public class PlayerCombatController : MonoBehaviour
     {
         IsAttacking = false;
         ResetCombo();
-
         _playerVisual.SetDashAttack(false);
+        _playerMoveController.EndAirAttackTime();
     }
 
     #endregion
@@ -211,7 +217,6 @@ public class PlayerCombatController : MonoBehaviour
     }
 
     #endregion
-
     #region DashAttack
 
     void StartDashAttack()
@@ -236,7 +241,6 @@ public class PlayerCombatController : MonoBehaviour
     }
 
     #endregion
-
     #region InAirAttack
 
     void StartInAirAttack()
@@ -251,10 +255,107 @@ public class PlayerCombatController : MonoBehaviour
 
     void AnimEvent_CheckInAirAttackHit()
     {
-        _playerHitboxManager.CheckInAirAttack();
+        bool isHit = _playerHitboxManager.CheckInAirAttack();
+        if (isHit)
+        {
+            _playerMoveController.StartAirAttackTime();
+        }
     }
 
     void AnimEvent_InAirAttackEnd()
+    {
+        EndAttack();
+    }
+
+    #endregion
+
+    #endregion
+
+    #region FireBreath
+
+    void OnFireBreathPerformed()
+    {
+        if (!_isAttackable)
+            return;
+
+        StartFireBreath();
+    }
+
+    void StartFireBreath()
+    {
+        _playerVisual.PlayFireBreath();
+    }
+
+    void AnimEvent_FireBreathStart()
+    {
+        BeginAttack();
+    }
+
+    void AnimEvent_CheckFireBreathHit()
+    {
+        _playerHitboxManager.CheckFireBreath();
+    }
+
+    void AnimEvent_FireBreathEnd()
+    {
+        EndAttack();
+    }
+
+    #endregion
+
+    #region FireBall
+
+    void OnFireBallPerformed()
+    {
+        if (!_isAttackable)
+            return;
+
+        StartFireBall();
+    }
+
+    void StartFireBall()
+    {
+        _playerVisual.PlayFireBall();
+    }
+
+    void AnimEvent_FireBallStart()
+    {
+        BeginAttack();
+    }
+
+    void AnimEvent_SpawnFireBall()
+    {
+        // TODO : Prefab 생성해 날리기
+    }
+
+    void AnimEvent_FireBallEnd()
+    {
+        EndAttack();
+    }
+
+    #endregion
+
+    #region IgniteSword
+
+    void OnIgniteSwordPerformed()
+    {
+        if (!_isAttackable)
+            return;
+
+        StartIgniteSword();
+    }
+
+    void StartIgniteSword()
+    {
+        _playerVisual.PlayIgniteSword();
+    }
+
+    void AnimEvent_IgniteSwordStart()
+    {
+        BeginAttack();
+    }
+
+    void AnimEvent_IgniteSwordEnd()
     {
         EndAttack();
     }

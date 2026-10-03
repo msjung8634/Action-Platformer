@@ -65,10 +65,32 @@ public class PlayerVisual : MonoBehaviour
     {
         _animator.SetTrigger(_inAirAttackHash);
     }
+    public void ResetInAirAttack()
+    {
+        _animator.ResetTrigger(_inAirAttackHash);
+    }
 
     static readonly int _dodgeHash = Animator.StringToHash("dodge");
     public void PlayDodge()
     {
         _animator.SetTrigger(_dodgeHash);
+    }
+
+    static readonly int _fireBreathHash = Animator.StringToHash("fireBreath");
+    public void PlayFireBreath()
+    {
+        _animator.SetTrigger(_fireBreathHash);
+    }
+
+    static readonly int _fireBallHash = Animator.StringToHash("fireBall");
+    public void PlayFireBall()
+    {
+        _animator.SetTrigger(_fireBallHash);
+    }
+
+    static readonly int _igniteSwordHash = Animator.StringToHash("igniteSword");
+    public void PlayIgniteSword()
+    {
+        _animator.SetTrigger(_igniteSwordHash);
     }
 }

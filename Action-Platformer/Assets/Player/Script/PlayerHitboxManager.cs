@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
@@ -31,6 +32,11 @@ public class PlayerHitboxManager : MonoBehaviour
     [SerializeField] Vector2 _dashAttack_Size = new(0.1f, 0.8f);
     [SerializeField] AttackData _dashAttack_Data;
 
+    [Header("FireBreath Attack")]
+    [SerializeField] Transform _fireBreath_Center;
+    [SerializeField] Vector2 _fireBreath_Size = new(0.1f, 0.8f);
+    [SerializeField] AttackData _fireBreath_Data;
+
     HashSet<IDamageable> _hitTargetCache = new();
     public void ClearCachedTarget()
     {
@@ -50,11 +56,15 @@ public class PlayerHitboxManager : MonoBehaviour
         }
     }
 
-    void CheckAttackHit(Transform center, Vector2 size, AttackData attackData)
+    void CheckHit(Transform center, Vector2 size, AttackData attackData, out bool isSuccess)
     {
         Collider2D[] enemyHitboxes = Physics2D.OverlapBoxAll(center.position, size, 0f, _attackTargetLayer);
         if (enemyHitboxes.Length == 0)
+        {
+            isSuccess = false;
             return;
+        }
+        isSuccess = true;
 
         foreach (Collider2D hitbox in enemyHitboxes)
         {
@@ -62,8 +72,8 @@ public class PlayerHitboxManager : MonoBehaviour
             if (!hitbox.TryGetComponent<IDamageable>(out var target))
                 continue;
 
-            // 이미 적중한 상황이면 skip
-            if (!_hitTargetCache.Add(target))
+            // SingleHit는 이미 적중한 상황이면 skip
+            if (!attackData.AllowMultiHit && !_hitTargetCache.Add(target))
                 continue;
 
             Vector2 hitPoint = hitbox.ClosestPoint(center.position);
@@ -87,17 +97,17 @@ public class PlayerHitboxManager : MonoBehaviour
 
     public void CheckComboAttack1()
     {
-        CheckAttackHit(_comboAttack1_Center, _comboAttack1_Size, _comboAttack1_Data);
+        CheckHit(_comboAttack1_Center, _comboAttack1_Size, _comboAttack1_Data, out bool isSuccess);
     }
 
     public void CheckComboAttack2()
     {
-        CheckAttackHit(_comboAttack2_Center, _comboAttack2_Size, _comboAttack2_Data);
+        CheckHit(_comboAttack2_Center, _comboAttack2_Size, _comboAttack2_Data, out bool isSuccess);
     }
 
     public void CheckComboAttack3()
     {
-        CheckAttackHit(_comboAttack3_Center, _comboAttack3_Size, _comboAttack3_Data);
+        CheckHit(_comboAttack3_Center, _comboAttack3_Size, _comboAttack3_Data, out bool isSuccess);
     }
 
     #endregion
@@ -106,20 +116,29 @@ public class PlayerHitboxManager : MonoBehaviour
 
     public void CheckDashAttack()
     {
-        CheckAttackHit(_dashAttack_Center, _dashAttack_Size, _dashAttack_Data);
+        CheckHit(_dashAttack_Center, _dashAttack_Size, _dashAttack_Data, out bool isSuccess);
     }
 
     #endregion
 
     #region InAirAttack
 
-    public void CheckInAirAttack()
+    public bool CheckInAirAttack()
     {
-        CheckAttackHit(_inAirAttack_Center, _inAirAttack_Size, _inAirAttack_Data);
+        CheckHit(_inAirAttack_Center, _inAirAttack_Size, _inAirAttack_Data, out bool isSuccess);
+        return isSuccess;
     }
 
     #endregion
 
+    #region FireBreath
+
+    public void CheckFireBreath()
+    {
+        CheckHit(_fireBreath_Center, _fireBreath_Size, _fireBreath_Data, out bool isSuccess);
+    }
+
+    #endregion
 
 #if UNITY_EDITOR
     void OnDrawGizmos()
@@ -136,6 +155,7 @@ public class PlayerHitboxManager : MonoBehaviour
             DrawHitbox(_comboAttack3_Center, _comboAttack3_Size);
             DrawHitbox(_inAirAttack_Center, _inAirAttack_Size);
             DrawHitbox(_dashAttack_Center, _dashAttack_Size);
+            DrawHitbox(_fireBreath_Center, _fireBreath_Size);
             return;
         }
 
@@ -167,6 +187,12 @@ public class PlayerHitboxManager : MonoBehaviour
             Selection.Contains(_dashAttack_Center.gameObject))
         {
             DrawHitbox(_dashAttack_Center, _dashAttack_Size);
+        }
+
+        if (_fireBreath_Center != null &&
+            Selection.Contains(_fireBreath_Center.gameObject))
+        {
+            DrawHitbox(_fireBreath_Center, _fireBreath_Size);
         }
     }
 
