@@ -6,7 +6,7 @@ AnimationClip:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Fire_Effect_7
+  m_Name: NoFire_JumpDescend
   serializedVersion: 7
   m_Legacy: 0
   m_Compressed: 0
@@ -21,13 +21,13 @@ AnimationClip:
   - serializedVersion: 2
     curve:
     - time: 0
-      value: {fileID: 4209470473251784477, guid: f7c3ac54bbbe4714aa648d0a6ffae290, type: 3}
+      value: {fileID: 611031372837262546, guid: d0caa85cb2b2585429afa2feeabb2803, type: 3}
     - time: 0.083333336
-      value: {fileID: 3688992650357657688, guid: f7c3ac54bbbe4714aa648d0a6ffae290, type: 3}
+      value: {fileID: 8807470212981023836, guid: d0caa85cb2b2585429afa2feeabb2803, type: 3}
     - time: 0.16666667
-      value: {fileID: -7815741919274686834, guid: f7c3ac54bbbe4714aa648d0a6ffae290, type: 3}
+      value: {fileID: 4729933221627395306, guid: d0caa85cb2b2585429afa2feeabb2803, type: 3}
     attribute: m_Sprite
-    path: 
+    path: Renderer
     classID: 212
     script: {fileID: 0}
     flags: 2
@@ -39,7 +39,7 @@ AnimationClip:
   m_ClipBindingConstant:
     genericBindings:
     - serializedVersion: 2
-      path: 0
+      path: 149930954
       attribute: 0
       script: {fileID: 0}
       typeID: 212
@@ -48,9 +48,9 @@ AnimationClip:
       isIntCurve: 0
       isSerializeReferenceCurve: 0
     pptrCurveMapping:
-    - {fileID: 4209470473251784477, guid: f7c3ac54bbbe4714aa648d0a6ffae290, type: 3}
-    - {fileID: 3688992650357657688, guid: f7c3ac54bbbe4714aa648d0a6ffae290, type: 3}
-    - {fileID: -7815741919274686834, guid: f7c3ac54bbbe4714aa648d0a6ffae290, type: 3}
+    - {fileID: 611031372837262546, guid: d0caa85cb2b2585429afa2feeabb2803, type: 3}
+    - {fileID: 8807470212981023836, guid: d0caa85cb2b2585429afa2feeabb2803, type: 3}
+    - {fileID: 4729933221627395306, guid: d0caa85cb2b2585429afa2feeabb2803, type: 3}
   m_AnimationClipSettings:
     serializedVersion: 2
     m_AdditiveReferencePoseClip: {fileID: 0}

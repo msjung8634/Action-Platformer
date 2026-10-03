@@ -602,7 +602,7 @@ Transform:
   m_GameObject: {fileID: 383872782}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 3, y: -1, z: 0}
+  m_LocalPosition: {x: 3, y: -2, z: 0}
   m_LocalScale: {x: 1, y: 0.1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2950,13 +2950,14 @@ MonoBehaviour:
   _walkSpeedMultiplier: 0.5
   _idleThreshold: 0.01
   _walkThreshold: 0.4
-  _jumpVelocity: 20
-  _jumpCutMultiplier: 0.4
-  _ascendGravity: 6
-  _apexGravity: 4
+  _jumpVelocity: 16
+  _jumpCutMultiplier: 0.3
+  _ascendGravity: 7
+  _apexGravity: 6
   _descendGravity: 9
-  _apexThreshold: 2
-  _dodgeSpeed: 15
+  _apexThreshold: 1
+  _jumpPhase: 0
+  _dodgeSpeed: 8
   _dodgeSpeedMultiplier: 1
 --- !u!114 &2010260592
 MonoBehaviour:

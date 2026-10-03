@@ -14,7 +14,7 @@ public class PlayerMoveController : MonoBehaviour
     [SerializeField] PlayerHitboxManager _playerHitboxManager;
 
     [Header("Move Speed")]
-    [SerializeField] float _runSpeed = 5f;
+    [SerializeField] float _runSpeed = 4f;
     [SerializeField] float _walkSpeedMultiplier = 0.5f;
     [Header("Move Thresholds")]
     [SerializeField, Range(0f, 1f)] float _idleThreshold = 0.01f;
@@ -22,15 +22,25 @@ public class PlayerMoveController : MonoBehaviour
     float _moveSpeedMultiplier = 1f;
 
     [Header("Jump")]
-    [SerializeField] float _jumpVelocity = 12f;
-    [SerializeField, Range(0f, 1f)] float _jumpCutMultiplier = 0.5f;
-    [SerializeField] float _ascendGravity = 6f;
-    [SerializeField] float _apexGravity = 4f;
+    [SerializeField] float _jumpVelocity = 16f;
+    [SerializeField, Range(0f, 1f)] float _jumpCutMultiplier = 0.4f;
+
+    [Header("Jump Gravity")]
+    [SerializeField] float _ascendGravity = 7f;
+    [SerializeField] float _apexGravity = 6f;
     [SerializeField] float _descendGravity = 9f;
-    [SerializeField] float _apexThreshold = 2f;
+    [SerializeField] float _apexThreshold = 1f;
+    [SerializeField] JumpPhase _jumpPhase = JumpPhase.Grounded;
+    enum JumpPhase
+    {
+        Grounded,
+        Ascend,
+        Apex,
+        Descend,
+    }
 
     [Header("Dodge")]
-    [SerializeField] float _dodgeSpeed = 15f;
+    [SerializeField] float _dodgeSpeed = 8f;
     [SerializeField] float _dodgeSpeedMultiplier = 1f; // Animation Curve로 조정
     public bool IsDodging { get; private set; }
 
@@ -121,7 +131,7 @@ public class PlayerMoveController : MonoBehaviour
     {
         Vector2 velocity = _rigidbody.linearVelocity;
 
-        // Dodge는 별도 처리
+        // dodge
         if (IsDodging)
         {
             velocity.x = _dodgeDirection.x * _dodgeSpeed * _dodgeSpeedMultiplier;
@@ -129,20 +139,19 @@ public class PlayerMoveController : MonoBehaviour
             return;
         }
 
-        // Move.State 확인
+        // y velocity
+        UpdateJumpPhase();
+        UpdateJumpGravity();
+
+        // x velocity
         if (!_isMovable)
         {
             velocity.x = 0f;
             _rigidbody.linearVelocity = velocity;
             return;
         }
-
-        // X축 제어
         velocity.x = _moveDirection.x * _runSpeed * _moveSpeedMultiplier;
         _rigidbody.linearVelocity = velocity;
-
-        // y축 제어
-        UpdateJumpGravity();
     }
 
     #region Jump
@@ -178,31 +187,77 @@ public class PlayerMoveController : MonoBehaviour
         }
     }
 
-    void UpdateJumpGravity()
+    void UpdateJumpPhase()
     {
-        // 지상
-        if (_environmentChecker.IsGrounded)
+        float yVelocity = _rigidbody.linearVelocity.y;
+
+        // Ascend [_jumpVelocity ~ _apexThreshold]
+        if (yVelocity > _apexThreshold)
         {
-            _rigidbody.gravityScale = _originalGravityScale;
+            SetJumpPhase(JumpPhase.Ascend);
             return;
         }
 
-        float yVelocity = _rigidbody.linearVelocity.y;
+        // Ascend처리한 후, Grounded확인
+        if (_environmentChecker.IsGrounded)
+        {
+            SetJumpPhase(JumpPhase.Grounded);
+            return;
+        }
 
-        // apex 근처
-        if (Mathf.Abs(yVelocity) <= _apexThreshold)
+        // Apex [_apexThreshold ~ -_apexThreshold]
+        if (yVelocity >= -_apexThreshold)
         {
-            _rigidbody.gravityScale = _apexGravity;
+            SetJumpPhase(JumpPhase.Apex);
         }
-        // ascend
-        else if (yVelocity > 0f)
-        {
-            _rigidbody.gravityScale = _ascendGravity;
-        }
-        // descend
+        // Descend [-_apexThreshold ~]
         else
         {
-            _rigidbody.gravityScale = _descendGravity;
+            SetJumpPhase(JumpPhase.Descend);
+        }
+    }
+    void SetJumpPhase(JumpPhase newPhase)
+    {
+        if (_jumpPhase == newPhase)
+            return;
+
+        switch (newPhase)
+        {
+            case JumpPhase.Ascend:
+                _playerVisual.PlayAscend();
+                break;
+
+            case JumpPhase.Descend:
+                _playerVisual.PlayDescend();
+                break;
+
+            case JumpPhase.Grounded:
+                _playerVisual.PlayLand();
+                break;
+        }
+
+        _jumpPhase = newPhase;
+    }
+
+    void UpdateJumpGravity()
+    {
+        switch (_jumpPhase)
+        {
+            case JumpPhase.Grounded:
+                _rigidbody.gravityScale = _originalGravityScale;
+                break;
+
+            case JumpPhase.Ascend:
+                _rigidbody.gravityScale = _ascendGravity;
+                break;
+
+            case JumpPhase.Apex:
+                _rigidbody.gravityScale = _apexGravity;
+                break;
+
+            case JumpPhase.Descend:
+                _rigidbody.gravityScale = _descendGravity;
+                break;
         }
     }
 

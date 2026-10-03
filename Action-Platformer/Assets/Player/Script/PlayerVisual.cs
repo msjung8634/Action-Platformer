@@ -30,6 +30,22 @@ public class PlayerVisual : MonoBehaviour
         _animator.SetFloat(_moveSpeedHash, speed);
     }
 
+    static readonly int _ascendHash = Animator.StringToHash("ascend");
+    static readonly int _descendHash = Animator.StringToHash("descend");
+    static readonly int _landHash = Animator.StringToHash("land");
+    public void PlayAscend()
+    {
+        _animator.SetTrigger(_ascendHash);
+    }
+    public void PlayDescend()
+    {
+        _animator.SetTrigger(_descendHash);
+    }
+    public void PlayLand()
+    {
+        _animator.SetTrigger(_landHash);
+    }
+
     static readonly int _groundAattackHash = Animator.StringToHash("groundAttack");
     static readonly int _comboIndexHash = Animator.StringToHash("comboIndex");
     public void PlayGroundAttack(int comboIndex)
