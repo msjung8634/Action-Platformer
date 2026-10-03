@@ -4,11 +4,13 @@ using UnityEngine;
 public class PlayerMoveController : MonoBehaviour
 {
     [Header("Refrences")]
-    [SerializeField] PlayerInput _playerInput;
-    [SerializeField] Rigidbody2D _rigidbody;
+    PlayerInput _playerInput;
+    Rigidbody2D _rigidbody;
+    PlayerVisual _playerVisual;
+    PlayerCombatController _playerCombatController;
+    PlayerResourceManager _resourceManager;
     [SerializeField] EnvironmentChecker _environmentChecker;
     [SerializeField] UnitStateMachine _stateMachine;
-    [SerializeField] PlayerVisual _playerVisual;
     [SerializeField] PlayerHitboxManager _playerHitboxManager;
 
     [Header("Move Speed")]
@@ -22,36 +24,64 @@ public class PlayerMoveController : MonoBehaviour
     [Header("Jump")]
     [SerializeField] float _jumpVelocity = 12f;
     [SerializeField, Range(0f, 1f)] float _jumpCutMultiplier = 0.5f;
+    [SerializeField] float _ascendGravity = 6f;
+    [SerializeField] float _apexGravity = 4f;
+    [SerializeField] float _descendGravity = 9f;
+    [SerializeField] float _apexThreshold = 2f;
 
+    [Header("Dodge")]
+    [SerializeField] float _dodgeSpeed = 15f;
+    [SerializeField] float _dodgeSpeedMultiplier = 1f; // Animation Curve로 조정
+    public bool IsDodging { get; private set; }
+
+    float _originalGravityScale;
     Vector2 _moveDirection;
     bool _isMovable => _stateMachine?.Move?.CurrentState.Equals(Move.State.Movable) ?? false;
 
+    void Awake()
+    {
+        TryGetComponent(out _playerInput);
+        TryGetComponent(out _rigidbody);
+        TryGetComponent(out _playerVisual);
+        TryGetComponent(out _playerCombatController);
+        TryGetComponent(out _resourceManager);
+    }
+
+    private void Start()
+    {
+        _originalGravityScale = _rigidbody.gravityScale;
+    }
+
     void OnEnable()
     {
-        if (_playerInput != null)
-        {
-            _playerInput.JumpStarted += OnJumpStarted;
-            _playerInput.JumpCanceled += OnJumpCanceled;
-        }
+        if (_playerInput == null)
+            return;
+
+        _playerInput.JumpStarted += OnJumpStarted;
+        _playerInput.JumpCanceled += OnJumpCanceled;
+
+        _playerInput.DodgePerformed += OnDodgePerformed;
     }
 
     void OnDisable()
     {
-        if (_playerInput != null)
-        {
-            _playerInput.JumpStarted -= OnJumpStarted;
-            _playerInput.JumpCanceled -= OnJumpCanceled;
-        }
+        if (_playerInput == null)
+            return;
+
+        _playerInput.JumpStarted -= OnJumpStarted;
+        _playerInput.JumpCanceled -= OnJumpCanceled;
+
+        _playerInput.DodgePerformed -= OnDodgePerformed;
     }
 
     void Update()
     {
+        var desiredDirection = _playerInput.DesiredDirection;
+        _moveDirection = GetMoveVector(desiredDirection);
+
         // Move.State 확인
         if (!_isMovable)
             return;
-
-        var desiredDirection = _playerInput.DesiredDirection;
-        _moveDirection = GetMoveVector(desiredDirection);
 
         _playerVisual.SetFacingDirection(desiredDirection);
         _playerHitboxManager.SetFacingDirection(desiredDirection);
@@ -91,6 +121,14 @@ public class PlayerMoveController : MonoBehaviour
     {
         Vector2 velocity = _rigidbody.linearVelocity;
 
+        // Dodge는 별도 처리
+        if (IsDodging)
+        {
+            velocity.x = _dodgeDirection.x * _dodgeSpeed * _dodgeSpeedMultiplier;
+            _rigidbody.linearVelocity = velocity;
+            return;
+        }
+
         // Move.State 확인
         if (!_isMovable)
         {
@@ -99,10 +137,15 @@ public class PlayerMoveController : MonoBehaviour
             return;
         }
 
-        // X축만 제어
+        // X축 제어
         velocity.x = _moveDirection.x * _runSpeed * _moveSpeedMultiplier;
         _rigidbody.linearVelocity = velocity;
+
+        // y축 제어
+        UpdateJumpGravity();
     }
+
+    #region Jump
 
     void OnJumpStarted()
     {
@@ -134,4 +177,108 @@ public class PlayerMoveController : MonoBehaviour
             _rigidbody.linearVelocity = velocity;
         }
     }
+
+    void UpdateJumpGravity()
+    {
+        // 지상
+        if (_environmentChecker.IsGrounded)
+        {
+            _rigidbody.gravityScale = _originalGravityScale;
+            return;
+        }
+
+        float yVelocity = _rigidbody.linearVelocity.y;
+
+        // apex 근처
+        if (Mathf.Abs(yVelocity) <= _apexThreshold)
+        {
+            _rigidbody.gravityScale = _apexGravity;
+        }
+        // ascend
+        else if (yVelocity > 0f)
+        {
+            _rigidbody.gravityScale = _ascendGravity;
+        }
+        // descend
+        else
+        {
+            _rigidbody.gravityScale = _descendGravity;
+        }
+    }
+
+    #endregion
+    #region Dodge
+
+    void OnDodgePerformed()
+    {
+        if (IsDodging)
+            return;
+
+        if (_playerCombatController.IsAttacking)
+        {
+            _playerCombatController.EndCombo();
+        }
+
+        _playerVisual.PlayDodge();
+    }
+
+    void AnimEvent_StartDodge()
+    {
+        gameObject.layer = LayerMask.NameToLayer("Ghost");
+        StartDodge();
+    }
+    Vector2 _dodgeDirection;
+    public void StartDodge()
+    {
+        IsDodging = true;
+
+        // 이동입력 있다면 해당 방향, 없다면 바라보는 방향으로 Dodge
+        if (_moveDirection != Vector2.zero)
+        {
+            _dodgeDirection = _moveDirection;
+
+            // Dodge 방향에 맞게 갱신
+            var faceDirection = _dodgeDirection.x > 0f
+                ? PlayerInput.MoveDirection.Right
+                : PlayerInput.MoveDirection.Left;
+
+            _playerVisual.SetFacingDirection(faceDirection);
+            _playerHitboxManager.SetFacingDirection(faceDirection);
+        }
+        else
+        {
+            _dodgeDirection =
+                _playerVisual.FaceDirection == PlayerInput.MoveDirection.Right
+                ? Vector2.right
+                : Vector2.left;
+        }
+
+        _rigidbody.linearVelocity = Vector2.zero;
+        _rigidbody.gravityScale = 0f;
+    }
+
+    void AnimEvent_SetDodgeState()
+    {
+        _stateMachine.SetState(new DodgeState());
+    }
+
+    void AnimEvent_SetNormalState()
+    {
+        _stateMachine.SetState(new NormalState());
+    }
+
+    void AnimEvent_EndDodge()
+    {
+        gameObject.layer = LayerMask.NameToLayer("Player");
+        EndDodge();
+    }
+    public void EndDodge()
+    {
+        IsDodging = false;
+
+        _rigidbody.linearVelocity = Vector2.zero;
+        _rigidbody.gravityScale = _originalGravityScale;
+    }
+
+    #endregion
 }

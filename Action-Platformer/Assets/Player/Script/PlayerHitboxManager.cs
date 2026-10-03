@@ -49,11 +49,11 @@ public class PlayerHitboxManager : MonoBehaviour
         CheckGroundAttack(_gAttack2_Center, _gAttack2_Size, _gAttack2Data);
     }
 
-    HashSet<IDamageable> _hitTargets = new();
+    HashSet<IDamageable> _hitTargetCache = new();
 
-    public void BeginAttack()
+    public void ClearCachedTarget()
     {
-        _hitTargets.Clear();
+        _hitTargetCache.Clear();
     }
 
     void CheckGroundAttack(Transform center, Vector2 size, AttackData attackData)
@@ -69,7 +69,7 @@ public class PlayerHitboxManager : MonoBehaviour
                 continue;
 
             // 이미 적중한 상황이면 skip
-            if (!_hitTargets.Add(target))
+            if (!_hitTargetCache.Add(target))
                 continue;
 
             Vector2 hitPoint = hitbox.ClosestPoint(center.position);

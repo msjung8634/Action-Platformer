@@ -2,9 +2,17 @@ using Cysharp.Threading.Tasks;
 using Unity.Cinemachine;
 using UnityEngine;
 
+[RequireComponent(typeof(CinemachineImpulseSource))]
 public class CameraManager : Singleton<CameraManager>
 {
-    [SerializeField] CinemachineImpulseSource _impulseSource;
+    CinemachineImpulseSource _impulseSource;
+
+    protected override void Awake()
+    {
+        base.Awake();
+
+        TryGetComponent(out _impulseSource);
+    }
 
     public void ApplyFeedback(FeedbackData feedbackData)
     {

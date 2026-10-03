@@ -5,14 +5,18 @@ public class PlayerVisual : MonoBehaviour
     [SerializeField] SpriteRenderer _renderer;
     [SerializeField] Animator _animator;
 
+    public PlayerInput.MoveDirection FaceDirection { get; private set; } = PlayerInput.MoveDirection.Right;
+
     public void SetFacingDirection(PlayerInput.MoveDirection direction)
     {
         switch (direction)
         {
             case PlayerInput.MoveDirection.Right:
+                FaceDirection = PlayerInput.MoveDirection.Right;
                 _renderer.flipX = false;
                 break;
             case PlayerInput.MoveDirection.Left:
+                FaceDirection = PlayerInput.MoveDirection.Left;
                 _renderer.flipX = true;
                 break;
             default:
@@ -32,5 +36,11 @@ public class PlayerVisual : MonoBehaviour
     {
         _animator.SetInteger(_comboIndexHash, comboIndex);
         _animator.SetTrigger(_groundAattackHash);
+    }
+
+    static readonly int _dodgeHash = Animator.StringToHash("dodge");
+    public void PlayDodge()
+    {
+        _animator.SetTrigger(_dodgeHash);
     }
 }

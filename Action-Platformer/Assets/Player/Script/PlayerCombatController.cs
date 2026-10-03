@@ -1,13 +1,16 @@
+using System.Resources;
 using UnityEngine;
 
 public class PlayerCombatController : MonoBehaviour
 {
     [Header("Refrences")]
-    [SerializeField] PlayerInput _playerInput;
-    [SerializeField] Rigidbody2D _rigidbody;
+    PlayerInput _playerInput;
+    Rigidbody2D _rigidbody;
+    PlayerVisual _playerVisual;
+    PlayerMoveController _playerMoveController;
+    PlayerResourceManager _resourceManager;
     [SerializeField] EnvironmentChecker _environmentChecker;
     [SerializeField] UnitStateMachine _stateMachine;
-    [SerializeField] PlayerVisual _playerVisual;
     [SerializeField] PlayerHitboxManager _playerHitboxManager;
 
     bool _isAttackable => _stateMachine?.Attack?.CurrentState.Equals(Attack.State.Attackable) ?? false;
@@ -15,7 +18,8 @@ public class PlayerCombatController : MonoBehaviour
     [Header("GroundAttack")]
     int _maxCombo = 3;
     int _comboIndex = -1;
-    bool _isAttacking;
+    public bool IsAttacking { get; private set; }
+
     bool _isComboWindowOpen;
     bool _isComboBuffered;
     [SerializeField] float _attackInputBufferTime = 0.4f;
@@ -24,23 +28,29 @@ public class PlayerCombatController : MonoBehaviour
     [Header("Parry")]
     bool b;
 
-    [Header("Dodge")]
-    bool c;
+    void Awake()
+    {
+        TryGetComponent(out _playerInput);
+        TryGetComponent(out _rigidbody);
+        TryGetComponent(out _playerVisual);
+        TryGetComponent(out _playerMoveController);
+        TryGetComponent(out _resourceManager);
+    }
 
     void OnEnable()
     {
-        if (_playerInput != null)
-        {
-            _playerInput.AttackPerformed += OnAttackPerformed;
-        }
+        if (_playerInput == null)
+            return;
+
+        _playerInput.AttackPerformed += OnAttackPerformed;
     }
 
     void OnDisable()
     {
-        if (_playerInput != null)
-        {
-            _playerInput.AttackPerformed -= OnAttackPerformed;
-        }
+        if (_playerInput == null)
+            return;
+
+        _playerInput.AttackPerformed -= OnAttackPerformed;
     }
 
     void Update()
@@ -56,7 +66,7 @@ public class PlayerCombatController : MonoBehaviour
     void OnAttackPerformed()
     {
         // 공격 중이 아니라면 1타 시작
-        if (!_isAttacking)
+        if (!IsAttacking)
         {
             if (!_isAttackable)
                 return;
@@ -88,9 +98,9 @@ public class PlayerCombatController : MonoBehaviour
 
     void StartGroundAttack()
     {
-        if (!_isAttacking)
+        if (!IsAttacking)
         {
-            _isAttacking = true;
+            IsAttacking = true;
             _stateMachine.SetState(new AttackState());
         }
         
@@ -100,7 +110,7 @@ public class PlayerCombatController : MonoBehaviour
         _attackInputBufferTimer = 0f;
 
         _comboIndex++;
-        _playerHitboxManager.BeginAttack();
+        _playerHitboxManager.ClearCachedTarget();
 
         _playerVisual.PlayGroundAttack(_comboIndex);
     }
@@ -123,18 +133,19 @@ public class PlayerCombatController : MonoBehaviour
 
     void AnimEvent_GroundAttackEnd()
     {
-        if (_isComboBuffered && _comboIndex < _maxCombo)
+        if (_isComboBuffered && _comboIndex < _maxCombo - 1)
         {
             StartGroundAttack();
             return;
         }
 
         EndCombo();
+        _stateMachine.SetState(new NormalState());
     }
 
-    void EndCombo()
+    public void EndCombo()
     {
-        _isAttacking = false;
+        IsAttacking = false;
 
         _comboIndex = -1;
 
@@ -142,8 +153,6 @@ public class PlayerCombatController : MonoBehaviour
         _isComboBuffered = false;
 
         _attackInputBufferTimer = 0f;
-
-        _stateMachine.SetState(new NormalState());
     }
 
     void AnimEvent_CheckGroundAttack0Hit()
@@ -166,10 +175,6 @@ public class PlayerCombatController : MonoBehaviour
     #endregion
 
     #region Parry
-
-    #endregion
-
-    #region Dodge
 
     #endregion
 }
