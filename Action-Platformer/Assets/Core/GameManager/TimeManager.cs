@@ -7,15 +7,15 @@ public class TimeManager : Singleton<TimeManager>
 {
     CancellationTokenSource _hitStopCts;
 
-    public void ApplyCombatFeedback(CombatFeedbackSO feedbackData)
+    public void ApplyFeedback(FeedbackData feedbackData)
     {
         _hitStopCts?.Cancel();
         _hitStopCts?.Dispose();
         _hitStopCts = CancellationTokenSource.CreateLinkedTokenSource(destroyCancellationToken);
 
-        PlayHitStopAsync(feedbackData, _hitStopCts.Token).Forget();
+        TimeFeedbackAsync(feedbackData, _hitStopCts.Token).Forget();
     }
-    private async UniTaskVoid PlayHitStopAsync(CombatFeedbackSO feedbackData, CancellationToken token)
+    private async UniTaskVoid TimeFeedbackAsync(FeedbackData feedbackData, CancellationToken token)
     {
         try
         {

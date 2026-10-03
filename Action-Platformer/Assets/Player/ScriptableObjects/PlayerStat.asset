@@ -9,7 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ad597d2eadc05ca4eb5555a845dcf31f, type: 3}
-  m_Name: EnemyStatSO_B
-  m_EditorClassIdentifier: Assembly-CSharp::EnemyStatSO
-  <MaxHP>k__BackingField: 2000
+  m_Script: {fileID: 11500000, guid: 4dce696eccea4f94a91802ecaa8d4e15, type: 3}
+  m_Name: PlayerStat
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerStatSO
+  <MaxHP>k__BackingField: 300
+  <MaxSP>k__BackingField: 500

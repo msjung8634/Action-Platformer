@@ -16,55 +16,43 @@ public class Resource
         Current = maxVal;
     }
 
-    public void TryIncreaseCurrent(int val, out bool isSuccess)
+    public bool TryIncreaseCurrent(int val)
     {
         if (val <= 0)
-        {
-            isSuccess = false;
-            return;
-        }
+            return false;
 
-        isSuccess = true;
         Current = Mathf.Min(Current + val, Max);
         OnChanged?.Invoke(Current, Max);
+        return true;
     }
 
-    public void TryDecreaseCurrent(int val, out bool isSuccess)
+    public bool TryDecreaseCurrent(int val)
     {
         if (val <= 0)
-        {
-            isSuccess = false;
-            return;
-        }
+            return false;
 
-        isSuccess = true;
         Current = Mathf.Max(Current - val, 0);
         OnChanged?.Invoke(Current, Max);
+        return true;
     }
 
-    public void TryIncreaseMax(int val, out bool isSuccess)
+    public bool TryIncreaseMax(int val)
     {
         if (val <= 0)
-        {
-            isSuccess = false;
-            return;
-        }
+            return false;
 
-        isSuccess = true;
         Max += val;
         OnChanged?.Invoke(Current, Max);
+        return true;
     }
 
-    public void TryDecreaseMax(int val, out bool isSuccess)
+    public bool TryDecreaseMax(int val)
     {
         if (val <= 0)
-        {
-            isSuccess = false;
-            return;
-        }
+            return false;
 
-        isSuccess = true;
         Max -= val;
         OnChanged?.Invoke(Current, Max);
+        return true;
     }
 }

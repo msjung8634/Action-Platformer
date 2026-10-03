@@ -6,11 +6,11 @@ public class CameraManager : Singleton<CameraManager>
 {
     [SerializeField] CinemachineImpulseSource _impulseSource;
 
-    public void ApplyCombatFeedbackShake(CombatFeedbackSO feedbackData)
+    public void ApplyFeedback(FeedbackData feedbackData)
     {
-        ShakeAsync(feedbackData).Forget();
+        CameraFeedbackAsync(feedbackData).Forget();
     }
-    async UniTaskVoid ShakeAsync(CombatFeedbackSO feedbackData)
+    async UniTaskVoid CameraFeedbackAsync(FeedbackData feedbackData)
     {
         var count = feedbackData.ShakeCount;
         var interval = feedbackData.ShakeInterval;

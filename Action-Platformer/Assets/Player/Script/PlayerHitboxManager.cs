@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
@@ -8,15 +9,15 @@ public class PlayerHitboxManager : MonoBehaviour
     [Space(10)]
     [SerializeField] Transform _gAttack0_Center;
     [SerializeField] Vector2 _gAttack0_Size = new(0.1f, 0.8f);
-    [SerializeField] CombatFeedbackSO _gAttack0_Feedback;
+    [SerializeField] AttackData _gAttack0Data;
     [Space(10)]
     [SerializeField] Transform _gAttack1_Center;
     [SerializeField] Vector2 _gAttack1_Size = new(0.1f, 0.8f);
-    [SerializeField] CombatFeedbackSO _gAttack1_Feedback;
+    [SerializeField] AttackData _gAttack1Data;
     [Space(10)]
     [SerializeField] Transform _gAttack2_Center;
     [SerializeField] Vector2 _gAttack2_Size = new(0.1f, 0.8f);
-    [SerializeField] CombatFeedbackSO _gAttack2_Feedback;
+    [SerializeField] AttackData _gAttack2Data;
 
     public void SetFacingDirection(PlayerInput.MoveDirection direction)
     {
@@ -35,55 +36,57 @@ public class PlayerHitboxManager : MonoBehaviour
 
     public void CheckGroundAttack0()
     {
-        if (!IsGroundAttackHit(_gAttack0_Center, _gAttack0_Size))
-            return;
-
-        // TODO : 좋은 Feedback을 주도록 노력할 것
-        // 이걸 구조화해서 정리하면 최고!
-
-        // TimeManager.Instance를 통해 Timescale 조정 (슬로우 or 정지)
-        // 타격 VFX 출력
-        // SFX 출력
-        // 캐릭터 약간 Knockback?
-
-        // Camera Shake
-        CombatFeedbackManager.Instance.ApplyFeedback(_gAttack0_Feedback);
+        CheckGroundAttack(_gAttack0_Center, _gAttack0_Size, _gAttack0Data);
     }
 
     public void CheckGroundAttack1()
     {
-        if (!IsGroundAttackHit(_gAttack1_Center, _gAttack1_Size))
-            return;
-
-        CombatFeedbackManager.Instance.ApplyFeedback(_gAttack1_Feedback);
+        CheckGroundAttack(_gAttack1_Center, _gAttack1_Size, _gAttack1Data);
     }
 
     public void CheckGroundAttack2()
     {
-        if (!IsGroundAttackHit(_gAttack2_Center, _gAttack2_Size))
-            return;
-
-        CombatFeedbackManager.Instance.ApplyFeedback(_gAttack2_Feedback);
+        CheckGroundAttack(_gAttack2_Center, _gAttack2_Size, _gAttack2Data);
     }
 
-    bool IsGroundAttackHit(Transform center, Vector2 size)
-    {
-        Collider2D[] enemyHitboxes = Physics2D.OverlapBoxAll(
-            center.position,
-            size,
-            0f,
-            _attackTargetLayer
-        );
+    HashSet<IDamageable> _hitTargets = new();
 
+    public void BeginAttack()
+    {
+        _hitTargets.Clear();
+    }
+
+    void CheckGroundAttack(Transform center, Vector2 size, AttackData attackData)
+    {
+        Collider2D[] enemyHitboxes = Physics2D.OverlapBoxAll(center.position, size, 0f, _attackTargetLayer);
         if (enemyHitboxes.Length == 0)
-            return false;
+            return;
 
         foreach (Collider2D hitbox in enemyHitboxes)
         {
-            Debug.Log($"Hit : {hitbox.name}");
-        }
+            // IDamagable만 검출
+            if (!hitbox.TryGetComponent<IDamageable>(out var target))
+                continue;
 
-        return true;
+            // 이미 적중한 상황이면 skip
+            if (!_hitTargets.Add(target))
+                continue;
+
+            Vector2 hitPoint = hitbox.ClosestPoint(center.position);
+            Vector2 hitDirection = (hitbox.transform.position - transform.position).normalized;
+
+            var hitData = new HitData
+            {
+                Attacker = transform.root.gameObject,
+                Target = target,
+                HitPoint = hitPoint,
+                HitDirection = hitDirection,
+                AttackData = attackData
+            };
+
+            CombatManager.Instance.ProcessHit(hitData);
+            Debug.Log($"{hitData}");
+        }
     }
 
     #endregion

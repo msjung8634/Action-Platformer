@@ -1,7 +1,7 @@
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "PlayerStatSO", menuName = "Scriptable Objects/Player Stat Data")]
-public class PlayerStatSO : ScriptableObject
+[CreateAssetMenu(fileName = "PlayerStat", menuName = "Scriptable Objects/Player Stat")]
+public class PlayerStat : ScriptableObject
 {
     // 1_00 당 1로 처리
     [field: SerializeField] public int MaxHP { get; private set; } = 3_00;  // 체력 3칸

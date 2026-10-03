@@ -100,6 +100,7 @@ public class PlayerCombatController : MonoBehaviour
         _attackInputBufferTimer = 0f;
 
         _comboIndex++;
+        _playerHitboxManager.BeginAttack();
 
         _playerVisual.PlayGroundAttack(_comboIndex);
     }
