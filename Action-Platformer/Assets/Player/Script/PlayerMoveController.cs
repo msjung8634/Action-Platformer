@@ -17,6 +17,7 @@ public class PlayerMoveController : MonoBehaviour
 
     [Header("Move Speed")]
     [SerializeField] float _runSpeed = 4f;
+    // TODO : Locomotion Blend Tree의 Threshold랑 맞출것
     [SerializeField] float _walkSpeedMultiplier = 0.5f;
     [Header("Move Thresholds")]
     [SerializeField, Range(0f, 1f)] float _idleThreshold = 0.01f;
@@ -93,34 +94,33 @@ public class PlayerMoveController : MonoBehaviour
 
     void Update()
     {
-        var desiredDirection = _playerInput.DesiredDirection;
-        _moveDirection = GetMoveVector(desiredDirection);
+        float horizontalInput = _playerInput.RawInput.x;
+        float inputMagnitude = Mathf.Abs(horizontalInput);
 
-        // Move.State 확인
+        if (inputMagnitude <= _idleThreshold)
+        {
+            _moveDirection = Vector2.zero;
+            _moveSpeedMultiplier = 0f;
+        }
+        else
+        {
+            _moveDirection = horizontalInput > 0f
+                ? Vector2.right
+                : Vector2.left;
+
+            _moveSpeedMultiplier = inputMagnitude <= _walkThreshold
+                ? _walkSpeedMultiplier
+                : 1f;
+        }
+
         if (!_isMovable)
             return;
 
-        _playerVisual.SetFacingDirection(desiredDirection);
-        _playerHitboxManager.SetFacingDirection(desiredDirection);
-
-        float inputMagnitude = Mathf.Abs(_playerInput.RawInput.x);
-        // Idle [0.0 ~ _idleThreshold]
-        if (inputMagnitude <= _idleThreshold) 
-        {
-            _moveSpeedMultiplier = 0f;
-        }
-        // Walk [_idleThreshold ~ _walkThreshold]
-        else if (inputMagnitude <= _walkThreshold)
-        {
-            _moveSpeedMultiplier = _walkSpeedMultiplier;
-        }
-        // Run [_walkThreshold ~ 1.0]
-        else
-        {
-            _moveSpeedMultiplier = 1f;
-        }
+        _playerVisual.SetFacingDirection(_playerInput.DesiredDirection);
+        _playerHitboxManager.SetFacingDirection(_playerInput.DesiredDirection);
         _playerVisual.SetMoveSpeed(_moveSpeedMultiplier);
     }
+
     Vector2 GetMoveVector(PlayerInput.MoveDirection direction)
     {
         switch (direction)
