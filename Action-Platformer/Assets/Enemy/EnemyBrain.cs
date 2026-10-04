@@ -16,12 +16,12 @@ public class EnemyBrain : MonoBehaviour
     float _nextSearchTime;
 
     [Header("Lock")]
-    [SerializeField, Min(0f)] float _lockDuration = 0.4f;
+    [SerializeField, Min(0f)] float _lockDuration = 0.1f;
     float _lockEndTime;
     bool _hasLock;
 
     [Header("Rest")]
-    [SerializeField, Min(0f)] float _restDuration = .6f;
+    [SerializeField] Vector2 _restDurationRange = new(.5f, 1.5f);
     float _restEndTime;
 
     [SerializeField] State _currentState;
@@ -159,7 +159,9 @@ public class EnemyBrain : MonoBehaviour
     void BeginRest()
     {
         _moveController.StopMove();
-        _restEndTime = Time.time + _restDuration;
+
+        float duration = Random.Range(_restDurationRange.x, _restDurationRange.y);
+        _restEndTime = Time.time + duration;
         _currentState = State.Rest;
     }
 

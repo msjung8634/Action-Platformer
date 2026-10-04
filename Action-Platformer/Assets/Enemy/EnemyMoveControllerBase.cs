@@ -11,6 +11,18 @@ public class EnemyMoveControllerBase : MonoBehaviour
     [SerializeField] protected UnitStateMachine _stateMachine;
     [SerializeField] protected EnemyHitboxManagerBase _hitboxManager;
 
+    [Header("Chase")]
+    [SerializeField] protected float _chaseSpeed = 4f;
+    [field: SerializeField] public float StopDistance { get; private set; } = .5f;
+
+    [Header("Retreat")]
+    [SerializeField, Min(0f)] protected float _retreatSpeed = 4f;
+    [SerializeField] protected Vector2 _retreatMaxDistanceRange = new(2f, 3f);
+    [SerializeField, Min(0f)] protected float _retreatMaxDuration = 2f;
+    protected float _currentRetreatMaxDistance;
+    protected float _retreatDirectionX;
+    protected float _retreatEndTime;
+
     protected float _originalGravityScale;
     protected bool _isMovable => _stateMachine?.Move?.CurrentState.Equals(Move.State.Movable) ?? false;
 

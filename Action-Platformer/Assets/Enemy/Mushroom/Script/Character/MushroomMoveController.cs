@@ -2,17 +2,6 @@ using UnityEngine;
 
 public class MushroomMoveController : EnemyMoveControllerBase
 {
-    [Header("Chase")]
-    [SerializeField] float _chaseSpeed = 4f;
-    [field: SerializeField] public float StopDistance { get; private set; } = .8f;
-
-    [Header("Retreat")]
-    [SerializeField, Min(0f)] float _retreatMaxDistance = 4f;
-    [SerializeField, Min(0f)] float _retreatSpeed = 4f;
-    [SerializeField, Min(0f)] float _retreatMaxDuration = 1.5f;
-    float _retreatDirectionX;
-    float _retreatEndTime;
-
     public override void TickMove(Transform target)
     {
         if (target == null || !_isMovable)
@@ -52,15 +41,17 @@ public class MushroomMoveController : EnemyMoveControllerBase
         if (target == null || !_isMovable)
             return false;
 
-        if (_retreatMaxDistance <= 0f ||
-            _retreatSpeed <= 0f ||
-            _retreatMaxDuration <= 0f)
+        if (_retreatSpeed <= 0f || _retreatMaxDuration <= 0f)
             return false;
 
-        float offsetX = target.position.x - transform.position.x;
+        // 이번 후퇴에 사용할 거리를 한 번만 선택
+        _currentRetreatMaxDistance = Random.Range(_retreatMaxDistanceRange.x, _retreatMaxDistanceRange.y);
+        if (_currentRetreatMaxDistance <= 0f)
+            return false;
 
-        // 충분히 멀면 후퇴 중단
-        if (Mathf.Abs(offsetX) >= _retreatMaxDistance)
+        float offsetX = target.position.x - _rigidbody.position.x;
+
+        if (Mathf.Abs(offsetX) >= _currentRetreatMaxDistance)
             return false;
 
         _retreatDirectionX = offsetX == 0f
@@ -68,7 +59,6 @@ public class MushroomMoveController : EnemyMoveControllerBase
             : -Mathf.Sign(offsetX);
 
         _retreatEndTime = Time.time + _retreatMaxDuration;
-
         return true;
     }
 
@@ -83,8 +73,8 @@ public class MushroomMoveController : EnemyMoveControllerBase
         float offsetX = target.position.x - transform.position.x;
         float distanceX = Mathf.Abs(offsetX);
 
-        if (distanceX >= _retreatMaxDistance ||    // 충분히 이격됨
-            Time.time >= _retreatEndTime)       // 제한시간 초과
+        if (distanceX >= _currentRetreatMaxDistance ||  // 목표 후퇴거리 도달
+            Time.time >= _retreatEndTime)               // 제한시간 초과
         {
             StopMove();
             return false;

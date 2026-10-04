@@ -11,10 +11,6 @@ public class MushroomHitboxManager : EnemyHitboxManagerBase
     [SerializeField] Transform _attack2_Center;
     [SerializeField] Vector2 _attack2_Size = new(0.74f, 1f);
     [SerializeField] AttackData _attack2_Data;
-    [Space(10)]
-    [SerializeField] Transform _attack3_Center;
-    [SerializeField] Vector2 _attack3_Size = new(1.6f, 0.6f);
-    [SerializeField] AttackData _attack3_Data;
 
     public void CheckAttack1()
     {
@@ -24,11 +20,6 @@ public class MushroomHitboxManager : EnemyHitboxManagerBase
     public void CheckAttack2()
     {
         CheckHit(_attack2_Center, _attack2_Size, _attack2_Data, out bool isSuccess);
-    }
-
-    public void CheckAttack3()
-    {
-        CheckHit(_attack3_Center, _attack3_Size, _attack3_Data, out bool isSuccess);
     }
 
 #if UNITY_EDITOR
@@ -43,7 +34,6 @@ public class MushroomHitboxManager : EnemyHitboxManagerBase
         {
             DrawHitbox(_attack1_Center, _attack1_Size);
             DrawHitbox(_attack2_Center, _attack2_Size);
-            DrawHitbox(_attack3_Center, _attack3_Size);
             return;
         }
 
@@ -57,12 +47,6 @@ public class MushroomHitboxManager : EnemyHitboxManagerBase
             Selection.Contains(_attack2_Center.gameObject))
         {
             DrawHitbox(_attack2_Center, _attack2_Size);
-        }
-
-        if (_attack3_Center != null &&
-            Selection.Contains(_attack3_Center.gameObject))
-        {
-            DrawHitbox(_attack3_Center, _attack3_Size);
         }
     }
 

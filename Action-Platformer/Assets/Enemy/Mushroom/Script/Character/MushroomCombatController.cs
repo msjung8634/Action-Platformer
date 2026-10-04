@@ -2,18 +2,19 @@ using UnityEngine;
 
 public class MushroomCombatController : EnemyCombatControllerBase
 {
-    enum MushroomAttackType
+    enum AttackType
     {
         None,
         Attack1,
         Attack2,
-        Attack3,
     }
 
     [Header("MeleeAttack")]
-    [SerializeField, Min(0f)] float _attackRange = 1f;
+    [SerializeField, Min(0f)] float _attackRange = .6f;
     [SerializeField, Min(0f)] float _attackHeightTolerance = 1f;
-    [SerializeField] MushroomAttackType _selectedAttack;
+
+    [Space(10)]
+    [SerializeField] AttackType _selectedAttack;
 
     public override bool TrySelectAttack(Transform target, out EnemyAttackType attackType)
     {
@@ -33,8 +34,8 @@ public class MushroomCombatController : EnemyCombatControllerBase
         if (Mathf.Abs(offset.y) > _attackHeightTolerance)
             return false;
 
-        // 공격 조건 충족 → Brain에서 Coordinator에 Lock 요청
-        _selectedAttack = (MushroomAttackType)Random.Range(1, 4);
+        // 공격 조건 충족 시, Brain에서 Coordinator에 Lock 요청
+        _selectedAttack = (AttackType)Random.Range(1, 3);
         return true;
     }
 
@@ -51,11 +52,9 @@ public class MushroomCombatController : EnemyCombatControllerBase
 
         switch (_selectedAttack)
         {
-            case MushroomAttackType.Attack1:
+            case AttackType.Attack1:
                 break;
-            case MushroomAttackType.Attack2:
-                break;
-            case MushroomAttackType.Attack3:
+            case AttackType.Attack2:
                 break;
         }
     }
@@ -66,14 +65,11 @@ public class MushroomCombatController : EnemyCombatControllerBase
 
         switch (_selectedAttack)
         {
-            case MushroomAttackType.Attack1:
+            case AttackType.Attack1:
                 StartAttack1();
                 break;
-            case MushroomAttackType.Attack2:
+            case AttackType.Attack2:
                 StartAttack2();
-                break;
-            case MushroomAttackType.Attack3:
-                StartAttack3();
                 break;
         }
     }
@@ -84,14 +80,12 @@ public class MushroomCombatController : EnemyCombatControllerBase
 
         switch (_selectedAttack)
         {
-            case MushroomAttackType.Attack1:
+            case AttackType.Attack1:
                 break;
-            case MushroomAttackType.Attack2:
-                break;
-            case MushroomAttackType.Attack3:
+            case AttackType.Attack2:
                 break;
         }
-        _selectedAttack = MushroomAttackType.None;
+        _selectedAttack = AttackType.None;
     }
 
     public override void CancelAttack()
@@ -100,14 +94,12 @@ public class MushroomCombatController : EnemyCombatControllerBase
 
         switch (_selectedAttack)
         {
-            case MushroomAttackType.Attack1:
+            case AttackType.Attack1:
                 break;
-            case MushroomAttackType.Attack2:
-                break;
-            case MushroomAttackType.Attack3:
+            case AttackType.Attack2:
                 break;
         }
-        _selectedAttack = MushroomAttackType.None;
+        _selectedAttack = AttackType.None;
     }
 
     #endregion
@@ -154,32 +146,16 @@ public class MushroomCombatController : EnemyCombatControllerBase
     }
 
     #endregion
-    #region Attack3
+    #region Die
 
-    void StartAttack3()
-    {
-        var visual = _visual as MushroomVisual;
-        visual.PlayAttack3();
-        Debug.Log("Start Attack3");
-    }
-
-    void AnimEvent_CheckAttack3Hit()
-    {
-        var hitboxManager = _hitboxManager as MushroomHitboxManager;
-        hitboxManager.CheckAttack3();
-    }
-
-    void AnimEvent_Attack3End()
-    {
-        BeginRecovery();
-    }
+    // 죽기전에 폭발하며 포자 날리기~
 
     #endregion
 
 #if UNITY_EDITOR
     void OnValidate()
     {
-        if (!TryGetComponent<MushroomMoveController>(out var moveController))
+        if (!TryGetComponent<EnemyMoveControllerBase>(out var moveController))
             return;
 
         float stopDistance = moveController.StopDistance;

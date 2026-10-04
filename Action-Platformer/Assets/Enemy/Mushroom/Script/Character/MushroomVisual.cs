@@ -19,10 +19,4 @@ public class MushroomVisual : EnemyVisualBase
     {
         _animator.SetTrigger(_attack2Hash);
     }
-
-    static readonly int _attack3Hash = Animator.StringToHash("attack3");
-    public void PlayAttack3()
-    {
-        _animator.SetTrigger(_attack3Hash);
-    }
 }
