@@ -43,14 +43,14 @@ public class PlayerHitboxManager : MonoBehaviour
         _hitTargetCache.Clear();
     }
 
-    public void SetFacingDirection(PlayerInput.MoveDirection direction)
+    public void SetFacingDirection(UnitMoveDirection direction)
     {
         switch (direction)
         {
-            case PlayerInput.MoveDirection.Right:
+            case UnitMoveDirection.Right:
                 transform.localScale = Vector3.one;
                 break;
-            case PlayerInput.MoveDirection.Left:
+            case UnitMoveDirection.Left:
                 transform.localScale = new Vector3(-1, 1, 1);
                 break;
         }

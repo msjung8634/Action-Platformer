@@ -65,7 +65,7 @@ public class PlayerMoveController : MonoBehaviour
         TryGetComponent(out _resourceManager);
     }
 
-    private void Start()
+    void Start()
     {
         _originalGravityScale = _rigidbody.gravityScale;
     }
@@ -121,19 +121,6 @@ public class PlayerMoveController : MonoBehaviour
         _playerVisual.SetMoveSpeed(_moveSpeedMultiplier);
     }
 
-    Vector2 GetMoveVector(PlayerInput.MoveDirection direction)
-    {
-        switch (direction)
-        {
-            case PlayerInput.MoveDirection.Right:
-                return Vector2.right;
-            case PlayerInput.MoveDirection.Left:
-                return Vector2.left;
-            default:
-                return Vector2.zero;
-        }
-    }
-
     void FixedUpdate()
     {
         Vector2 velocity = _rigidbody.linearVelocity;
@@ -141,8 +128,7 @@ public class PlayerMoveController : MonoBehaviour
         // dodge
         if (IsDodging)
         {
-            velocity.x = _dodgeDirection.x * _dodgeSpeed * _dodgeSpeedMultiplier;
-            _rigidbody.linearVelocity = velocity;
+            _rigidbody.linearVelocityX = _dodgeDirection.x * _dodgeSpeed * _dodgeSpeedMultiplier;
             return;
         }
 
@@ -160,12 +146,10 @@ public class PlayerMoveController : MonoBehaviour
         // x velocity
         if (!_isMovable)
         {
-            velocity.x = 0f;
-            _rigidbody.linearVelocity = velocity;
+            _rigidbody.linearVelocityX = 0f;
             return;
         }
-        velocity.x = _moveDirection.x * _runSpeed * _moveSpeedMultiplier;
-        _rigidbody.linearVelocity = velocity;
+        _rigidbody.linearVelocityX = _moveDirection.x * _runSpeed * _moveSpeedMultiplier;
     }
 
     #region Jump
@@ -180,10 +164,7 @@ public class PlayerMoveController : MonoBehaviour
         if (_environmentChecker == null || !_environmentChecker.IsGrounded)
             return;
 
-        Vector2 velocity = _rigidbody.linearVelocity;
-        velocity.y = _jumpVelocity;
-
-        _rigidbody.linearVelocity = velocity;
+        _rigidbody.linearVelocityY = _jumpVelocity;
     }
 
     void OnJumpCanceled()
@@ -194,16 +175,13 @@ public class PlayerMoveController : MonoBehaviour
         // 상승 중일 때, Jump Cut 적용
         if (_rigidbody.linearVelocity.y > 0f)
         {
-            Vector2 velocity = _rigidbody.linearVelocity;
-            velocity.y *= _jumpCutMultiplier;
-
-            _rigidbody.linearVelocity = velocity;
+            _rigidbody.linearVelocityY *= _jumpCutMultiplier;
         }
     }
 
     void UpdateJumpPhase()
     {
-        float yVelocity = _rigidbody.linearVelocity.y;
+        float yVelocity = _rigidbody.linearVelocityY;
 
         // Ascend [_jumpVelocity ~ _apexThreshold]
         if (yVelocity > _apexThreshold)
@@ -309,16 +287,15 @@ public class PlayerMoveController : MonoBehaviour
 
             // Dodge 방향에 맞게 갱신
             var faceDirection = _dodgeDirection.x > 0f
-                ? PlayerInput.MoveDirection.Right
-                : PlayerInput.MoveDirection.Left;
+                ? UnitMoveDirection.Right
+                : UnitMoveDirection.Left;
 
             _playerVisual.SetFacingDirection(faceDirection);
             _playerHitboxManager.SetFacingDirection(faceDirection);
         }
         else
         {
-            _dodgeDirection =
-                _playerVisual.FaceDirection == PlayerInput.MoveDirection.Right
+            _dodgeDirection = _playerVisual.FaceDirection == UnitMoveDirection.Right
                 ? Vector2.right
                 : Vector2.left;
         }

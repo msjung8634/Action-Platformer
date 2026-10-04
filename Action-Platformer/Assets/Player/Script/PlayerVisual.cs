@@ -1,22 +1,32 @@
 using UnityEngine;
 
+public enum UnitMoveDirection
+{
+    None,
+    Right,
+    Left,
+}
+
 public class PlayerVisual : MonoBehaviour
 {
     [SerializeField] SpriteRenderer _renderer;
     [SerializeField] Animator _animator;
 
-    public PlayerInput.MoveDirection FaceDirection { get; private set; } = PlayerInput.MoveDirection.Right;
+    public UnitMoveDirection FaceDirection { get; private set; } = UnitMoveDirection.Right;
 
-    public void SetFacingDirection(PlayerInput.MoveDirection direction)
+    public void SetFacingDirection(UnitMoveDirection newDirection)
     {
-        switch (direction)
+        if (FaceDirection == newDirection)
+            return;
+
+        switch (newDirection)
         {
-            case PlayerInput.MoveDirection.Right:
-                FaceDirection = PlayerInput.MoveDirection.Right;
+            case UnitMoveDirection.Right:
+                FaceDirection = UnitMoveDirection.Right;
                 _renderer.flipX = false;
                 break;
-            case PlayerInput.MoveDirection.Left:
-                FaceDirection = PlayerInput.MoveDirection.Left;
+            case UnitMoveDirection.Left:
+                FaceDirection = UnitMoveDirection.Left;
                 _renderer.flipX = true;
                 break;
             default:

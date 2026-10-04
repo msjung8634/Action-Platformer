@@ -63,6 +63,31 @@ public class PlayerCombatController : MonoBehaviour
         UpdateAttackInputBuffer();
     }
 
+    #region Common 
+
+    void BeginAttack()
+    {
+        IsAttacking = true;
+        _stateMachine.SetState(new AttackState());
+        _playerHitboxManager.ClearCachedTarget();
+    }
+
+    void EndAttack()
+    {
+        IsAttacking = false;
+        _stateMachine.SetState(new NormalState());
+    }
+
+    public void CancelAttack()
+    {
+        IsAttacking = false;
+        ResetCombo();
+        _playerVisual.SetDashAttack(false);
+        _playerMoveController.EndAirAttackTime();
+    }
+
+    #endregion
+
     #region Attack(Sword)
 
     #region HandleAttackInput
@@ -104,31 +129,6 @@ public class PlayerCombatController : MonoBehaviour
     }
 
     #endregion
-    #region Attack Common 
-
-    void BeginAttack()
-    {
-        IsAttacking = true;
-        _stateMachine.SetState(new AttackState());
-        _playerHitboxManager.ClearCachedTarget();
-    }
-
-    void EndAttack()
-    {
-        IsAttacking = false;
-        _stateMachine.SetState(new NormalState());
-    }
-
-    public void CancelAttack()
-    {
-        IsAttacking = false;
-        ResetCombo();
-        _playerVisual.SetDashAttack(false);
-        _playerMoveController.EndAirAttackTime();
-    }
-
-    #endregion
-
     #region ComboAttack
 
     void StartComboAttack()

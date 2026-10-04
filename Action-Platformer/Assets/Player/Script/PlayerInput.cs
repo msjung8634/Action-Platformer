@@ -150,7 +150,7 @@ public class PlayerInput : MonoBehaviour
     void OnDisable()
     {
         RawInput = Vector2.zero;
-        DesiredDirection = MoveDirection.None;
+        DesiredDirection = UnitMoveDirection.None;
 
         _shoulderCombinationCts?.Cancel();
         _shoulderCombinationCts?.Dispose();
@@ -211,14 +211,8 @@ public class PlayerInput : MonoBehaviour
     }
 
     // Move
-    public enum MoveDirection
-    {
-        None,
-        Right,
-        Left,
-    }
     public Vector2 RawInput { get; private set; }
-    public MoveDirection DesiredDirection { get; private set; }
+    public UnitMoveDirection DesiredDirection { get; private set; }
 
     void OnMove(InputAction.CallbackContext context)
     {
@@ -226,19 +220,19 @@ public class PlayerInput : MonoBehaviour
         DesiredDirection = GetDesiredDirection(RawInput);
     }
 
-    MoveDirection GetDesiredDirection(Vector2 input)
+    UnitMoveDirection GetDesiredDirection(Vector2 input)
     {
         // 입력이 없는 경우
         if (input.sqrMagnitude < 0.01f)
-            return MoveDirection.None;
+            return UnitMoveDirection.None;
 
         if (input.x > 0.01f)
-            return MoveDirection.Right;
+            return UnitMoveDirection.Right;
 
         if (input.x < -0.01f)
-            return MoveDirection.Left;
+            return UnitMoveDirection.Left;
 
-        return MoveDirection.None;
+        return UnitMoveDirection.None;
     }
 
     // Jump
