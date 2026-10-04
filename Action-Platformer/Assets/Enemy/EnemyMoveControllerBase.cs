@@ -36,4 +36,16 @@ public class EnemyMoveControllerBase : MonoBehaviour
     {
         // 수평 이동 정지. 중력과 수직 속도는 필요에 따라 유지
     }
+
+    public virtual bool TryBeginRetreat(Transform target)
+    {
+        // 후퇴 시작시 true
+        return false;
+    }
+
+    public virtual bool TryTickRetreat(Transform target)
+    {
+        // 후퇴중이면 true, 후퇴완료면 false
+        return false;
+    }
 }    

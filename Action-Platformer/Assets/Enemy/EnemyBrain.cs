@@ -4,9 +4,11 @@ public class EnemyBrain : MonoBehaviour
 {
     enum State
     {
-        Move,
+        Chase,
         Lock,
-        Attack
+        Attack,
+        Retreat,
+        Rest,
     }
 
     [Header("Search Target")]
@@ -17,6 +19,10 @@ public class EnemyBrain : MonoBehaviour
     [SerializeField, Min(0f)] float _lockDuration = 0.4f;
     float _lockEndTime;
     bool _hasLock;
+
+    [Header("Rest")]
+    [SerializeField, Min(0f)] float _restDuration = .6f;
+    float _restEndTime;
 
     [SerializeField] State _currentState;
     EnemyMoveControllerBase _moveController;
@@ -41,7 +47,7 @@ public class EnemyBrain : MonoBehaviour
 
         switch (_currentState)
         {
-            case State.Move:
+            case State.Chase:
                 UpdateMove();
                 break;
 
@@ -52,8 +58,18 @@ public class EnemyBrain : MonoBehaviour
             case State.Attack:
                 UpdateAttack();
                 break;
+
+            case State.Retreat:
+                // FixedUpdate에서 처리
+                break;
+
+            case State.Rest:
+                UpdateRest();
+                break;
         }
     }
+
+    #region Update
 
     void SearchTarget()
     {
@@ -103,28 +119,70 @@ public class EnemyBrain : MonoBehaviour
             return;
 
         ReleaseLock();
-        _currentState = State.Move;
+
+        _currentState = _moveController.TryBeginRetreat(_currentTarget)
+            ? State.Retreat
+            : State.Chase;
     }
+
+    void UpdateRest()
+    {
+        if (Time.time < _restEndTime)
+            return;
+
+        _currentState = State.Chase;
+    }
+
+    #endregion
 
     void FixedUpdate()
     {
-        if (_currentTarget != null && _currentState == State.Move)
-            _moveController.TickMove(_currentTarget);
+        if (_currentTarget == null)
+            return;
+
+        switch (_currentState)
+        {
+            case State.Chase:
+                _moveController.TickMove(_currentTarget);
+                break;
+            case State.Retreat:
+                if (!_moveController.TryTickRetreat(_currentTarget))
+                {
+                    BeginRest();
+                }
+                break;
+        }
     }
+
+    #region FixedUpdate
+
+    void BeginRest()
+    {
+        _moveController.StopMove();
+        _restEndTime = Time.time + _restDuration;
+        _currentState = State.Rest;
+    }
+
+    #endregion
 
     void OnDisable()
     {
         CancelCurrentAction();
     }
 
+    #region OnDisable
+
     public void CancelCurrentAction()
     {
-        if (_currentState != State.Move)
+        if (_currentState == State.Lock ||
+            _currentState == State.Attack)
+        {
             _combatController.CancelAttack();
+        }
 
         _moveController.StopMove();
         ReleaseLock();
-        _currentState = State.Move;
+        _currentState = State.Chase;
     }
 
     void ReleaseLock()
@@ -135,4 +193,6 @@ public class EnemyBrain : MonoBehaviour
         EnemyCoordinator.Instance.ReleaseLock(this);
         _hasLock = false;
     }
+
+    #endregion
 }
