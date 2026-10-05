@@ -174,7 +174,6 @@ public class PlayerMoveController : MonoBehaviour
     }
 
     #endregion
-
     #region Jump
 
     void OnJumpStarted()

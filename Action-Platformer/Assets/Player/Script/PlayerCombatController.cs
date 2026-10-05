@@ -98,7 +98,7 @@ public class PlayerCombatController : MonoBehaviour
         UpdateAttackInputBuffer();
     }
 
-    #region Common 
+    #region Common
 
     bool TryRequestAttack(AttackData attackData)
     {
@@ -402,7 +402,7 @@ public class PlayerCombatController : MonoBehaviour
     void StartFireBall()
     {
         if (!TryRequestAttack(_fireball))
-                return;
+            return;
 
         _playerVisual.PlayFireBall();
     }
