@@ -1,4 +1,3 @@
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerCombatController : MonoBehaviour
@@ -419,6 +418,7 @@ public class PlayerCombatController : MonoBehaviour
 
     void OnHit()
     {
+        CancelAttack();
         _stateMachine.SetState(new StunState());
         _playerVisual.PlayHit();
     }
@@ -434,6 +434,7 @@ public class PlayerCombatController : MonoBehaviour
 
     void OnDead()
     {
+        CancelAttack();
         _stateMachine.SetState(new DeadState());
         _playerVisual.PlayDie();
     }

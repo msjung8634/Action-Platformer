@@ -4,15 +4,13 @@ using UnityEngine;
 public class PlayerResourceManager : MonoBehaviour, IHpHandler, ISpHandler
 {
     [SerializeField] PlayerStat _statData;
-
     [field:SerializeField] public Resource HP { get; private set; }
     [field: SerializeField] public Resource SP { get; private set; }
-
     public event Action<int, int> OnHpChanged;
     public event Action<int, int> OnSpChanged;
+
     public event Action OnHit;
     public event Action OnDead;
-
 
     void Awake()
     {

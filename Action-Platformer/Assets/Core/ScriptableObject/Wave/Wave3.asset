@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b4c3f7d10325a9047a9718dbd8c0de0d, type: 3}
+  m_Name: Wave3
+  m_EditorClassIdentifier: Assembly-CSharp::WaveData
+  Spawns:
+  - SpawnTimeSeconds: 0
+    Prefab: {fileID: 6411370618602910842, guid: 6565f12e4164af447807ce2e34a25881, type: 3}
+    Side: 0
+    Offset: {x: 0, y: 0}
+  - SpawnTimeSeconds: 1
+    Prefab: {fileID: 6411370618602910842, guid: 6565f12e4164af447807ce2e34a25881, type: 3}
+    Side: 1
+    Offset: {x: 0, y: 0}
+  - SpawnTimeSeconds: 4
+    Prefab: {fileID: 6411370618602910842, guid: 6565f12e4164af447807ce2e34a25881, type: 3}
+    Side: 0
+    Offset: {x: 0, y: 0}
+  - SpawnTimeSeconds: 5
+    Prefab: {fileID: 6411370618602910842, guid: 6565f12e4164af447807ce2e34a25881, type: 3}
+    Side: 1
+    Offset: {x: 0, y: 0}
+  NextWaveDelaySeconds: 5
