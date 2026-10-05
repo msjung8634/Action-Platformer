@@ -10,7 +10,6 @@ public class PlayerResourceManager : MonoBehaviour, IHpHandler, ISpHandler
 
     public event Action<int, int> OnHpChanged;
     public event Action<int, int> OnSpChanged;
-
     public event Action OnHit;
     public event Action OnDead;
 

@@ -26,4 +26,16 @@ public class EnemyVisualBase : MonoBehaviour
                 break;
         }
     }
+
+    protected static readonly int _hitHash = Animator.StringToHash("hit");
+    public void PlayHit()
+    {
+        _animator.SetTrigger(_hitHash);
+    }
+
+    protected static readonly int _dieHash = Animator.StringToHash("die");
+    public void PlayDie()
+    {
+        _animator.SetTrigger(_dieHash);
+    }
 }

@@ -10,6 +10,7 @@ public class EnemyCombatControllerBase : MonoBehaviour
     [SerializeField] protected EnvironmentChecker _environmentChecker;
     [SerializeField] protected UnitStateMachine _stateMachine;
     [SerializeField] protected EnemyHitboxManagerBase _hitboxManager;
+    [SerializeField] protected EnemyBrain _brain;
 
     [Header("Recovery")]
     [SerializeField, Min(0f)] protected float _recoveryDuration = .5f;
@@ -25,6 +26,18 @@ public class EnemyCombatControllerBase : MonoBehaviour
         TryGetComponent(out _rigidbody);
         TryGetComponent(out _visual);
         TryGetComponent(out _moveController);
+    }
+
+    protected virtual void OnEnable()
+    {
+        _resourceManager.OnHit += OnHit;
+        _resourceManager.OnDead += OnDead;
+    }
+
+    protected virtual void OnDisable()
+    {
+        _resourceManager.OnHit -= OnHit;
+        _resourceManager.OnDead -= OnDead;
     }
 
     void Update()
@@ -88,6 +101,40 @@ public class EnemyCombatControllerBase : MonoBehaviour
     {
         IsAttacking = false;
         _isRecovering = false;
+    }
+
+    #endregion
+
+    #region OnHit
+
+    void OnHit()
+    {
+        _stateMachine.SetState(new StunState());
+        _brain.BeginStun();
+        _visual.PlayHit();
+    }
+
+    void AnimEvent_HitEnd()
+    {
+        _stateMachine.SetState(new NormalState());
+        _brain.EndStun();
+    }
+
+    #endregion
+
+    #region OnDead
+
+    void OnDead()
+    {
+        _stateMachine.SetState(new DeadState());
+        _brain.BeginDead();
+        _visual.PlayDie();
+    }
+
+    void AnimEvent_DieEnd()
+    {
+        // TODO : Object Pool에 반환하도록 수정
+        gameObject.SetActive(false);
     }
 
     #endregion

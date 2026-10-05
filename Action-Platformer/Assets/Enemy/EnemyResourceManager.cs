@@ -1,4 +1,3 @@
-using Mono.Cecil.Cil;
 using System;
 using UnityEngine;
 
@@ -8,12 +7,23 @@ public class EnemyResourceManager : MonoBehaviour, IHpHandler
 
     [field: SerializeField] public Resource HP { get; private set; }
 
+    public event Action<int, int> OnHpChanged;
     public event Action OnHit;
     public event Action OnDead;
 
     void Awake()
     {
         HP = new Resource(_statData.MaxHP);
+    }
+
+    void OnEnable()
+    {
+        HP.OnChanged += HpChanged;
+    }
+
+    void OnDisable()
+    {
+        HP.OnChanged -= HpChanged;
     }
 
     #region HP
@@ -45,7 +55,10 @@ public class EnemyResourceManager : MonoBehaviour, IHpHandler
         HP.TryDecreaseMax(amount);
     }
 
-    #endregion
+    void HpChanged(int current, int max)
+    {
+        OnHpChanged?.Invoke(current, max);
+    }
 
-    // TODO : SP 0되면 탈진 (2초간 SP재생 중단)
+    #endregion
 }

@@ -9,6 +9,9 @@ public class EnemyBrain : MonoBehaviour
         Attack,
         Retreat,
         Rest,
+
+        Stun,
+        Dead,
     }
 
     [Header("Search Target")]
@@ -25,6 +28,8 @@ public class EnemyBrain : MonoBehaviour
     float _restEndTime;
 
     [SerializeField] State _currentState;
+    public bool IsStunned => _currentState == State.Stun;
+    public bool IsDead => _currentState == State.Dead;
     EnemyMoveControllerBase _moveController;
     EnemyCombatControllerBase _combatController;
     [SerializeField] Transform _currentTarget;
@@ -37,6 +42,9 @@ public class EnemyBrain : MonoBehaviour
 
     void Update()
     {
+        if (IsStunned || IsDead)
+            return;
+
         SearchTarget();
 
         if (_currentTarget == null)
@@ -137,6 +145,9 @@ public class EnemyBrain : MonoBehaviour
 
     void FixedUpdate()
     {
+        if (IsStunned || IsDead)
+            return;
+
         if (_currentTarget == null)
             return;
 
@@ -174,16 +185,16 @@ public class EnemyBrain : MonoBehaviour
 
     #region OnDisable
 
-    public void CancelCurrentAction()
+    public void CancelCurrentAction(bool releaseLock = true)
     {
-        if (_currentState == State.Lock ||
-            _currentState == State.Attack)
+        _combatController.CancelAttack();
+        _moveController.StopMove();
+        
+        if (releaseLock)
         {
-            _combatController.CancelAttack();
+            ReleaseLock();
         }
 
-        _moveController.StopMove();
-        ReleaseLock();
         _currentState = State.Chase;
     }
 
@@ -197,4 +208,31 @@ public class EnemyBrain : MonoBehaviour
     }
 
     #endregion
+
+    public void BeginStun()
+    {
+        // 행동 취소, 공격 시 이득을 주도록 Coordinator Lock은 유지
+        CancelCurrentAction(false);
+        _currentState = State.Stun;
+    }
+
+    public void EndStun()
+    {
+        ReleaseLock();
+
+        if (_moveController.TryBeginRetreat(_currentTarget))
+        {
+            _currentState = State.Retreat;
+        }
+        else
+        {
+            BeginRest();
+        }
+    }
+
+    public void BeginDead()
+    {
+        CancelCurrentAction();
+        _currentState = State.Dead;
+    }
 }
