@@ -174,7 +174,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 20853008}
-  m_LocalRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.86, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -184,10 +184,10 @@ RectTransform:
   - {fileID: 297543459}
   - {fileID: 839289887}
   m_Father: {fileID: 1648210669}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 90}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 33.4, y: 32.5}
+  m_AnchoredPosition: {x: 0, y: -18.8}
   m_SizeDelta: {x: 60, y: 4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &20853010
@@ -232,8 +232,8 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   _shakeDuration: 0.2
-  _shakeStrength: {x: 0, y: 2}
-  _shakeVibrato: 16
+  _shakeStrength: {x: 4, y: 0}
+  _shakeVibrato: 24
   _shakeMultiplierStep: 0.3
   _maxShakeMultiplier: 1.2
 --- !u!1 &28854036
@@ -1695,8 +1695,8 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   _shakeDuration: 0.2
-  _shakeStrength: {x: 2, y: 0}
-  _shakeVibrato: 16
+  _shakeStrength: {x: 4, y: 0}
+  _shakeVibrato: 24
   _shakeMultiplierStep: 0.3
   _maxShakeMultiplier: 1.2
 --- !u!1 &506750171
@@ -4635,9 +4635,9 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  _shakeDuration: 0.4
-  _shakeStrength: {x: 2, y: 1}
-  _shakeVibrato: 16
+  _shakeDuration: 0.2
+  _shakeStrength: {x: 4, y: 0}
+  _shakeVibrato: 24
   _shakeMultiplierStep: 0.3
   _maxShakeMultiplier: 2.5
 --- !u!1 &1205556930
@@ -6234,10 +6234,24 @@ MonoBehaviour:
   - {fileID: 443245806}
   - {fileID: 766701655}
   - {fileID: 722039192}
-  _spNotEnough: {r: 0.7176471, g: 0.92549026, b: 0.65882355, a: 0}
-  _spEnough: {r: 0.14901961, g: 0.6509804, b: 0.2392157, a: 0}
-  _fpNotEnough: {r: 0.65882355, g: 0.6627451, b: 0.9215687, a: 0}
-  _fpEnough: {r: 0.14901961, g: 0.14901961, b: 0.64705884, a: 0}
+  _jump: {fileID: 775814769}
+  _jumpData: {fileID: 11400000, guid: 8e74f1dfacaed84439e4ba50246660e7, type: 2}
+  _dodge: {fileID: 1616450209}
+  _dodgeData: {fileID: 11400000, guid: 196d1a685fea77d46a302a6c1e1c5057, type: 2}
+  _meleeAttack: {fileID: 719413008}
+  _meleeAttackData: {fileID: 11400000, guid: 74121391a6b0cd641b345c9a59ce0d92, type: 2}
+  _parry: {fileID: 306229188}
+  _parryData: {fileID: 11400000, guid: c4260b85325f86941b15c8e39fb955a1, type: 2}
+  _fireBreath: {fileID: 407851189}
+  _fireBreathData: {fileID: 11400000, guid: 6f3ad9fa553459343b7e8204304c2473, type: 2}
+  _fireBall: {fileID: 1880434706}
+  _fireBallData: {fileID: 11400000, guid: 288be554e78ff5846b0e5e59c8acee2a, type: 2}
+  _igniteSword: {fileID: 1068578361}
+  _igniteSwordData: {fileID: 11400000, guid: 1ee6d7cae728b114c989ba71e9d4de8b, type: 2}
+  _spNotEnough: {r: 0.7176471, g: 0.92549026, b: 0.65882355, a: 0.60784316}
+  _spEnough: {r: 0.2775454, g: 0.764151, b: 0.36498234, a: 1}
+  _fpNotEnough: {r: 0.65882355, g: 0.6627451, b: 0.9215687, a: 0.60784316}
+  _fpEnough: {r: 0.2912514, g: 0.29125133, b: 0.7264151, a: 1}
 --- !u!1 &1647814029
 GameObject:
   m_ObjectHideFlags: 0
@@ -7884,6 +7898,7 @@ MonoBehaviour:
   _igniteSword: {fileID: -198299929216338632, guid: 8f2d44588148b0c4a815fef77082d50b, type: 3}
   _parry: {fileID: 1550966855511711866, guid: 8f2d44588148b0c4a815fef77082d50b, type: 3}
   _shoulderCombinationTime: 0.08
+  _inputThreshold: 0.001
 --- !u!114 &2010260590
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7914,8 +7929,8 @@ MonoBehaviour:
   _environmentChecker: {fileID: 875032894}
   _stateMachine: {fileID: 2049172509}
   _playerHitboxManager: {fileID: 775292688}
-  _runSpeed: 4
-  _walkSpeedMultiplier: 0.5
+  _runSpeed: 3
+  _walkSpeedMultiplier: 0.6
   _idleThreshold: 0.01
   _walkThreshold: 0.4
   _jumpData: {fileID: 11400000, guid: 8e74f1dfacaed84439e4ba50246660e7, type: 2}

@@ -210,7 +210,9 @@ public class PlayerInput : MonoBehaviour
         }
     }
 
+
     // Move
+    [SerializeField] float _inputThreshold = 0.01f;
     public Vector2 RawInput { get; private set; }
     public UnitMoveDirection DesiredDirection { get; private set; }
 
@@ -223,13 +225,13 @@ public class PlayerInput : MonoBehaviour
     UnitMoveDirection GetDesiredDirection(Vector2 input)
     {
         // 입력이 없는 경우
-        if (input.sqrMagnitude < 0.01f)
+        if (input.sqrMagnitude < _inputThreshold)
             return UnitMoveDirection.None;
 
-        if (input.x > 0.01f)
+        if (input.x > _inputThreshold)
             return UnitMoveDirection.Right;
 
-        if (input.x < -0.01f)
+        if (input.x < -_inputThreshold)
             return UnitMoveDirection.Left;
 
         return UnitMoveDirection.None;
