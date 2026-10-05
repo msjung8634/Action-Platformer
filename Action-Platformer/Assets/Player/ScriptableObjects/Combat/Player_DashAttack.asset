@@ -10,16 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7ec4cdae2af3e4a409f01fa156156247, type: 3}
-  m_Name: Player_gComboAttack2
+  m_Name: Player_DashAttack
   m_EditorClassIdentifier: Assembly-CSharp::CombatFeedbackSO
   <SfxClip>k__BackingField: {fileID: 0}
   <SfxVolume>k__BackingField: 1
-  <ShakeStrength>k__BackingField: 0.04
+  <ShakeStrength>k__BackingField: 0.06
   <ShakeCount>k__BackingField: 1
   <ShakeInterval>k__BackingField: 0.05
   <StopTimeDuration>k__BackingField: 0.04
   <SlowTimeDuration>k__BackingField: 0.1
-  <SlowTimeScale>k__BackingField: 0.8
+  <SlowTimeScale>k__BackingField: 0.6
   <AllowMultiHit>k__BackingField: 0
   <Damage>k__BackingField: 100
   <SpConsumption>k__BackingField: 0
+  <FpConsumption>k__BackingField: 0
+  <FpGain>k__BackingField: 40

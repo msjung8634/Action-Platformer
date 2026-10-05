@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: af773f00889071f44be8b7f448d1a0b6, type: 3}
-  m_Name: DodgeData_Dash
+  m_Name: Player_JumpMove
   m_EditorClassIdentifier: Assembly-CSharp::DodgeData
   <SfxClip>k__BackingField: {fileID: 0}
   <SfxVolume>k__BackingField: 1
@@ -20,4 +20,4 @@ MonoBehaviour:
   <StopTimeDuration>k__BackingField: 0.01
   <SlowTimeDuration>k__BackingField: 0.05
   <SlowTimeScale>k__BackingField: 0.1
-  <SpConsumption>k__BackingField: 100
+  <SpConsumption>k__BackingField: 40

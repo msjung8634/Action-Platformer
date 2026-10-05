@@ -141,7 +141,7 @@ MonoBehaviour:
   _resourceManager: {fileID: 6322319152309017417}
   _front: {fileID: 4304029092381458407}
   _back: {fileID: 5038456015891330856}
-  _delaySeconds: 0.3
+  _decreaseDelay: 0.3
   _decreaseDuration: 0.8
   _decreaseCurve:
     serializedVersion: 2
@@ -739,8 +739,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DamageReceiver
   <AimPoint>k__BackingField: {fileID: 943113724823349818}
   <StateMachine>k__BackingField: {fileID: 7273803963576149397}
-  _hpHandlerObject: {fileID: 8413229887107255427}
-  _spHandlerObject: {fileID: 0}
+  _resourceHandler: {fileID: 8413229887107255427}
 --- !u!1 &6103958596206151777
 GameObject:
   m_ObjectHideFlags: 0

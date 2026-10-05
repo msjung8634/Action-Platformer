@@ -17,6 +17,7 @@ public class HpBarUI : ResourceBarUI
             return;
 
         _hpHandler.OnHpChanged += OnResourceChanged;
+        _hpHandler.OnDead += OnNotEnough;
     }
 
     protected override void Unsubscribe()
@@ -25,5 +26,6 @@ public class HpBarUI : ResourceBarUI
             return;
 
         _hpHandler.OnHpChanged -= OnResourceChanged;
+        _hpHandler.OnDead -= OnNotEnough;
     }
 }

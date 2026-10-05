@@ -22,4 +22,4 @@ MonoBehaviour:
   <SlowTimeScale>k__BackingField: 0.1
   <AllowMultiHit>k__BackingField: 0
   <Damage>k__BackingField: 100
-  <SpConsumption>k__BackingField: 100
+  <SpConsumption>k__BackingField: 0

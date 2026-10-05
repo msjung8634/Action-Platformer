@@ -28,11 +28,9 @@ public class EnemyResourceManager : MonoBehaviour, IHpHandler
 
     #region HP
 
-    public bool TryConsumeHP(int amount)
+    public void DecreaseHp(int amount)
     {
-        if (!HP.TryDecreaseCurrent(amount))
-            return false;
-
+        HP.TryDecreaseCurrent(amount);
         if (HP.Current == 0)
         {
             OnDead?.Invoke();
@@ -41,8 +39,6 @@ public class EnemyResourceManager : MonoBehaviour, IHpHandler
         {
             OnHit?.Invoke();
         }
-
-        return true;
     }
 
     void HpChanged(int current, int max)

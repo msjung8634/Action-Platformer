@@ -1,3 +1,4 @@
+using DG.Tweening;
 using UnityEngine;
 
 public class SpBarUI : ResourceBarUI
@@ -17,6 +18,7 @@ public class SpBarUI : ResourceBarUI
             return;
 
         _spHandler.OnSpChanged += OnResourceChanged;
+        _spHandler.OnNotEnoughSp += OnNotEnough;
     }
 
     protected override void Unsubscribe()
@@ -25,5 +27,6 @@ public class SpBarUI : ResourceBarUI
             return;
 
         _spHandler.OnSpChanged -= OnResourceChanged;
+        _spHandler.OnNotEnoughSp -= OnNotEnough;
     }
 }

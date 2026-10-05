@@ -1,7 +1,7 @@
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "DodgeData_", menuName = "Scriptable Objects/DodgeData")]
-public class DodgeData : FeedbackData
+[CreateAssetMenu(fileName = "MoveData_", menuName = "Scriptable Objects/MoveData")]
+public class MoveData : FeedbackData
 {
     // Resource
     [field: Header("Resource")]

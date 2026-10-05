@@ -4,15 +4,12 @@ public class DamageReceiver : MonoBehaviour, IDamageable
 {
     [field: SerializeField] public Transform AimPoint { get; private set; }
     [field: SerializeField] public UnitStateMachine StateMachine { get; private set; }
-    [SerializeField] MonoBehaviour _hpHandlerObject;
-    [SerializeField] MonoBehaviour _spHandlerObject;
+    [SerializeField] MonoBehaviour _resourceHandler;
     IHpHandler _hpHandler;
-    ISpHandler _spHandler;
 
     void Awake()
     {
-        _hpHandler = _hpHandlerObject as IHpHandler;
-        _spHandler = _spHandlerObject as ISpHandler;
+        _hpHandler = _resourceHandler as IHpHandler;
     }
 
     public void TakeDamage(HitData hitData)
@@ -20,9 +17,9 @@ public class DamageReceiver : MonoBehaviour, IDamageable
         if (StateMachine.Hit.CurrentState == Hit.State.NonHittable)
             return;
 
-        _hpHandler?.TryConsumeHP(hitData.AttackData.Damage);
-        _spHandler?.TryConsumeSP(hitData.AttackData.SpConsumption);
-        Debug.Log($"{hitData}");
+        _hpHandler?.DecreaseHp(hitData.AttackData.Damage);
+        // TODO : 화염 속성치 부여
+        //Debug.Log($"{hitData}");
 
         if (hitData.AttackData == null)
             return;

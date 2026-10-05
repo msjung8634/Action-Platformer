@@ -15,20 +15,20 @@ public class PlayerMoveController : MonoBehaviour
     [SerializeField] UnitStateMachine _stateMachine;
     [SerializeField] PlayerHitboxManager _playerHitboxManager;
 
-    [Header("Move Speed")]
+    [Header("Move(Walk/Run)")]
     [SerializeField] float _runSpeed = 4f;
-    // TODO : Locomotion Blend Tree의 Threshold랑 맞출것
+    // Locomotion Blend Tree의 Threshold와 일치시킬 것
     [SerializeField] float _walkSpeedMultiplier = 0.5f;
-    [Header("Move Thresholds")]
+    [Space(10)]
     [SerializeField, Range(0f, 1f)] float _idleThreshold = 0.01f;
     [SerializeField, Range(0f, 1f)] float _walkThreshold = 0.4f;
     float _moveSpeedMultiplier = 1f;
 
     [Header("Jump")]
+    [SerializeField] MoveData _jumpData;
     [SerializeField] float _jumpVelocity = 16f;
     [SerializeField, Range(0f, 1f)] float _jumpCutMultiplier = 0.4f;
-
-    [Header("Jump Gravity")]
+    [Space(10)]
     [SerializeField] float _ascendGravity = 7f;
     [SerializeField] float _apexGravity = 6f;
     [SerializeField] float _descendGravity = 4f;
@@ -44,13 +44,14 @@ public class PlayerMoveController : MonoBehaviour
     }
 
     [Header("Dodge")]
-    [SerializeField] float _dodgeSpeed = 8f;
-    [SerializeField] float _dodgeSpeedMultiplier = 1f; // Animation Curve로 조정
+    [SerializeField] MoveData _dashData;
+    [SerializeField] float _dashSpeed = 8f;
+    [SerializeField] float _dashSpeedMultiplier = 1f; // Animation Curve로 조정
     public bool IsDodging { get; private set; }
 
     [Header("InAirAttackTime")]
-    public bool IsAirAttacking { get; private set; }
     [SerializeField] float _airAttackStopDuration = 0.1f;
+    public bool IsAirAttacking { get; private set; }
 
     Vector2 _moveDirection;
     bool _isMovable => _stateMachine?.Move?.CurrentState.Equals(Move.State.Movable) ?? false;
@@ -84,6 +85,7 @@ public class PlayerMoveController : MonoBehaviour
 
         _playerInput.DodgePerformed += OnDodgePerformed;
 
+        if (WaveManager.Instance == null) return;
         WaveManager.Instance.OnRestartGame += OnRestartGame;
     }
 
@@ -97,6 +99,7 @@ public class PlayerMoveController : MonoBehaviour
 
         _playerInput.DodgePerformed -= OnDodgePerformed;
 
+        if (WaveManager.Instance == null) return;
         WaveManager.Instance.OnRestartGame -= OnRestartGame;
     }
 
@@ -136,7 +139,7 @@ public class PlayerMoveController : MonoBehaviour
         // dodge
         if (IsDodging)
         {
-            _rigidbody.linearVelocityX = _dodgeDirection.x * _dodgeSpeed * _dodgeSpeedMultiplier;
+            _rigidbody.linearVelocityX = _dodgeDirection.x * _dashSpeed * _dashSpeedMultiplier;
             return;
         }
 
@@ -160,16 +163,29 @@ public class PlayerMoveController : MonoBehaviour
         _rigidbody.linearVelocityX = _moveDirection.x * _runSpeed * _moveSpeedMultiplier;
     }
 
+    #region Common
+
+    bool TryRequestMove(MoveData moveData)
+    {
+        if (IsDodging || _resourceManager.HP.Current == 0)
+            return false;
+
+        return _resourceManager.TryConsumeResource(moveData);
+    }
+
+    #endregion
+
     #region Jump
 
     void OnJumpStarted()
     {
-        // Move.State 확인
         if (!_isMovable)
             return;
 
-        // 지면에서만 점프 가능
         if (_environmentChecker == null || !_environmentChecker.IsGrounded)
+            return;
+
+        if (!TryRequestMove(_jumpData))
             return;
 
         _rigidbody.linearVelocityY = _jumpVelocity;
@@ -180,7 +196,7 @@ public class PlayerMoveController : MonoBehaviour
         if (!_isMovable)
             return;
 
-        // 상승 중일 때, Jump Cut 적용
+        // 상승 중일 때, Jump Cut
         if (_rigidbody.linearVelocity.y > 0f)
         {
             _rigidbody.linearVelocityY *= _jumpCutMultiplier;
@@ -267,7 +283,7 @@ public class PlayerMoveController : MonoBehaviour
 
     void OnDodgePerformed()
     {
-        if (IsDodging || _resourceManager.HP.Current == 0)
+        if (!TryRequestMove(_dashData))
             return;
 
         if (_playerCombatController.IsAttacking)
@@ -278,11 +294,11 @@ public class PlayerMoveController : MonoBehaviour
         gameObject.layer = LayerMask.NameToLayer("Ghost");
         _stateMachine.SetState(new DodgeState());
         _playerVisual.PlayDodge();
-        StartDodgeMove();
+        StartDashMove();
     }
 
     Vector2 _dodgeDirection;
-    public void StartDodgeMove()
+    public void StartDashMove()
     {
         IsDodging = true;
 

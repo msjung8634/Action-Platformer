@@ -1,3 +1,4 @@
+using System.Resources;
 using UnityEngine;
 
 public class PlayerCombatController : MonoBehaviour
@@ -16,6 +17,9 @@ public class PlayerCombatController : MonoBehaviour
     public bool IsAttacking { get; private set; }
 
     [Header("ComboAttack")]
+    [SerializeField] AttackData _comboAttack1;
+    [SerializeField] AttackData _comboAttack2;
+    [SerializeField] AttackData _comboAttack3;
     [SerializeField] int _maxCombo = 3;
     [SerializeField] float _comboAttackInputBufferTime = 0.4f;
     int _comboIndex = -1;
@@ -23,14 +27,28 @@ public class PlayerCombatController : MonoBehaviour
     bool _isComboBuffered;
     float _comboAttackInputBufferTimer;
 
+    [Header("DashAttack")]
+    [SerializeField] AttackData _dashAttack;
+
+    [Header("InAirAttack")]
+    [SerializeField] AttackData _inAirAttack;
+
     [Header("Fireball")]
+    [SerializeField] AttackData _fireball;
     [SerializeField] Transform _spawnPosition;
     [SerializeField] GameObject _projectilePrefab;
-    [SerializeField] AttackData _projectileData;
     [SerializeField] LayerMask _targetLayer;
     [SerializeField] float _flySpeed;
 
+    [Header("Firebreath")]
+    [SerializeField] AttackData _firebreath;
+
+    [Header("IgniteSword")]
+    [SerializeField] AttackData _igniteSword;
+
     [Header("Parry")]
+    [SerializeField] AttackData _parry;
+
     bool b;
 
     void Awake()
@@ -54,6 +72,7 @@ public class PlayerCombatController : MonoBehaviour
         _playerInput.FireBallPerformed += OnFireBallPerformed;
         _playerInput.IgniteSwordPerformed += OnIgniteSwordPerformed;
 
+        if (WaveManager.Instance == null) return;
         WaveManager.Instance.OnRestartGame += OnRestartGame;
     }
 
@@ -70,6 +89,7 @@ public class PlayerCombatController : MonoBehaviour
         _playerInput.FireBreathPerformed -= OnFireBreathPerformed;
         _playerInput.IgniteSwordPerformed -= OnIgniteSwordPerformed;
 
+        if (WaveManager.Instance == null) return;
         WaveManager.Instance.OnRestartGame -= OnRestartGame;
     }
 
@@ -79,6 +99,20 @@ public class PlayerCombatController : MonoBehaviour
     }
 
     #region Common 
+
+    bool TryRequestAttack(AttackData attackData)
+    {
+        if (!_isAttackable || IsAttacking)
+            return false;
+
+        if (!_resourceManager.TryConsumeResource(attackData))
+            return false;
+
+        // 애니메이션 시작 이벤트가 오기 전까지
+        // 연속 입력으로 SP가 중복 소비되는 것을 방지
+        IsAttacking = true;
+        return true;
+    }
 
     void BeginAttack()
     {
@@ -128,7 +162,7 @@ public class PlayerCombatController : MonoBehaviour
 
         if (_environmentChecker.IsGrounded)
         {
-            StartComboAttack();
+            TryStartNextComboAttack();
             return;
         }
         
@@ -156,6 +190,41 @@ public class PlayerCombatController : MonoBehaviour
         ResetComboInput();
         _playerHitboxManager.ClearCachedTarget();
         _playerVisual.PlayComboAttack(++_comboIndex);
+    }
+
+    AttackData GetComboAttackData(int comboIndex)
+    {
+        return comboIndex switch
+        {
+            0 => _comboAttack1,
+            1 => _comboAttack2,
+            2 => _comboAttack3,
+            _ => null
+        };
+    }
+
+    bool TryStartNextComboAttack()
+    {
+        int nextComboIndex = _comboIndex + 1;
+
+        if (nextComboIndex >= _maxCombo)
+            return false;
+
+        // 실패하면 콤보 번호, 공격 상태를 유지
+        AttackData attackData = GetComboAttackData(nextComboIndex);
+        if (!_resourceManager.TryConsumeResource(attackData))
+            return false;
+
+        if (!IsAttacking)
+            BeginAttack();
+
+        ResetComboInput();
+        _playerHitboxManager.ClearCachedTarget();
+
+        _comboIndex = nextComboIndex;
+        _playerVisual.PlayComboAttack(_comboIndex);
+
+        return true;
     }
 
     void ResetComboInput()
@@ -200,9 +269,8 @@ public class PlayerCombatController : MonoBehaviour
 
     void AnimEvent_ComboAttackEnd()
     {
-        if (_isComboBuffered && _comboIndex < _maxCombo - 1)
+        if (_isComboBuffered && _comboIndex < _maxCombo - 1 && TryStartNextComboAttack())
         {
-            StartComboAttack();
             return;
         }
 
@@ -236,6 +304,9 @@ public class PlayerCombatController : MonoBehaviour
 
     void StartDashAttack()
     {
+        if (!TryRequestAttack(_dashAttack))
+            return;
+
         _playerVisual.SetDashAttack(true);
     }
 
@@ -260,6 +331,9 @@ public class PlayerCombatController : MonoBehaviour
 
     void StartInAirAttack()
     {
+        if (!TryRequestAttack(_inAirAttack))
+            return;
+
         _playerVisual.PlayInAirAttack();
     }
 
@@ -290,14 +364,14 @@ public class PlayerCombatController : MonoBehaviour
 
     void OnFireBreathPerformed()
     {
-        if (!_isAttackable)
-            return;
-
         StartFireBreath();
     }
 
     void StartFireBreath()
     {
+        if (!TryRequestAttack(_firebreath))
+            return;
+
         _playerVisual.PlayFireBreath();
     }
 
@@ -322,14 +396,14 @@ public class PlayerCombatController : MonoBehaviour
 
     void OnFireBallPerformed()
     {
-        if (!_isAttackable)
-            return;
-
         StartFireBall();
     }
 
     void StartFireBall()
     {
+        if (!TryRequestAttack(_fireball))
+                return;
+
         _playerVisual.PlayFireBall();
     }
 
@@ -374,7 +448,7 @@ public class PlayerCombatController : MonoBehaviour
             Target = target,
             HitPoint = hitPoint,
             HitDirection = projectile.FlyDirection,
-            AttackData = _projectileData
+            AttackData = _fireball
         };
 
         CombatManager.Instance.ProcessHit(hitData);
@@ -391,14 +465,14 @@ public class PlayerCombatController : MonoBehaviour
 
     void OnIgniteSwordPerformed()
     {
-        if (!_isAttackable)
-            return;
-
         StartIgniteSword();
     }
 
     void StartIgniteSword()
     {
+        if (!TryRequestAttack(_igniteSword))
+            return;
+
         _playerVisual.PlayIgniteSword();
     }
 
