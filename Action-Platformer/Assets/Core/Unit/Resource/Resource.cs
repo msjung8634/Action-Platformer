@@ -10,10 +10,10 @@ public class Resource
     // <Current, Max>
     public event Action<int, int> OnChanged;
 
-    public Resource(int maxVal)
+    public Resource(int startVal, int maxVal)
     {
         Max = maxVal;
-        Current = maxVal;
+        Current = startVal;
     }
 
     public bool TryIncreaseCurrent(int val)

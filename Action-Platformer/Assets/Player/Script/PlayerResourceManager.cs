@@ -6,6 +6,13 @@ public class PlayerResourceManager : MonoBehaviour, IHpHandler, ISpHandler
     [SerializeField] PlayerStat _statData;
     [field:SerializeField] public Resource HP { get; private set; }
     [field: SerializeField] public Resource SP { get; private set; }
+
+    [Header("SP Regeneration")]
+    [SerializeField, Min(0f)] int _spRegenPerSecond = 20;
+    [SerializeField, Min(0f)] float _spRegenDelay = 0.8f;
+    float _spRegenElapsed;
+    float _spRegenStartTime;
+
     public event Action<int, int> OnHpChanged;
     public event Action<int, int> OnSpChanged;
 
@@ -14,49 +21,59 @@ public class PlayerResourceManager : MonoBehaviour, IHpHandler, ISpHandler
 
     void Awake()
     {
-        HP = new Resource(_statData.MaxHP);
-        SP = new Resource(_statData.MaxSP);
+        HP = new Resource(_statData.MaxHP, _statData.MaxHP);
+        SP = new Resource(0, _statData.MaxSP);
     }
 
     void OnEnable()
     {
+        WaveManager.Instance.OnRestartGame += OnRestartGame;
         HP.OnChanged += HpChanged;
         SP.OnChanged += SpChanged;
     }
 
     void OnDisable()
     {
+        WaveManager.Instance.OnRestartGame -= OnRestartGame;
         HP.OnChanged -= HpChanged;
         SP.OnChanged -= SpChanged;
     }
 
+    void OnRestartGame()
+    {
+        HP = new Resource(_statData.MaxHP, _statData.MaxHP);
+        SP = new Resource(0, _statData.MaxSP);
+        HP.OnChanged += HpChanged;
+        SP.OnChanged += SpChanged;
+        HpChanged(HP.Current, HP.Max);
+        SpChanged(SP.Current, SP.Max);
+
+        _spRegenElapsed = 0f;
+        _spRegenStartTime = Time.time;
+    }
+
+    void Update()
+    {
+        RegenerateSP();
+    }
+
     #region HP
 
-    public void IncreaseCurrentHP(int amount)
+    public bool TryConsumeHP(int amount)
     {
-        HP.TryIncreaseCurrent(amount);
-    }
-    public void DecreaseCurrentHP(int amount)
-    {
-        if (HP.TryDecreaseCurrent(amount))
+        if (!HP.TryDecreaseCurrent(amount))
+            return false;
+
+        if (HP.Current == 0)
         {
-            if (HP.Current == 0)
-            {
-                OnDead?.Invoke();
-            }
-            else
-            {
-                OnHit?.Invoke();
-            }
+            OnDead?.Invoke();
         }
-    }
-    public void IncreaseMaxHP(int amount)
-    {
-        HP.TryIncreaseMax(amount);
-    }
-    public void DecreaseMaxHP(int amount)
-    {
-        HP.TryDecreaseMax(amount);
+        else
+        {
+            OnHit?.Invoke();
+        }
+
+        return true;
     }
 
     void HpChanged(int current, int max)
@@ -67,26 +84,48 @@ public class PlayerResourceManager : MonoBehaviour, IHpHandler, ISpHandler
     #endregion
     #region SP
 
-    public void IncreaseCurrentSP(int amount)
-    {
-        SP.TryIncreaseCurrent(amount);
-    }
-    public void DecreaseCurrentSP(int amount)
-    {
-        SP.TryDecreaseCurrent(amount);
-    }
-    public void IncreaseMaxSP(int amount)
-    {
-        SP.TryIncreaseMax(amount);
-    }
-    public void DecreaseMaxSP(int amount)
-    {
-        SP.TryDecreaseMax(amount);
-    }
-
     void SpChanged(int current, int max)
     {
         OnSpChanged?.Invoke(current, max);
+    }
+
+    public bool TryConsumeSP(int amount)
+    {
+        if (!SP.TryDecreaseCurrent(amount))
+            return false;
+
+        // SP 소모 시, 재생 초기화
+        _spRegenStartTime = Time.time + _spRegenDelay;
+        _spRegenElapsed = 0f;
+
+        return true;
+    }
+
+    void RegenerateSP()
+    {
+        // 재생 불가
+        if (HP.Current <= 0
+            || SP.Current >= SP.Max
+            || _spRegenPerSecond <= 0)
+        {
+            _spRegenElapsed = 0f;
+            return;
+        }
+
+        if (Time.time < _spRegenStartTime)
+            return;
+
+        _spRegenElapsed += Time.deltaTime;
+
+        float secondsPerPoint = 1f / _spRegenPerSecond;
+        int regenAmount = Mathf.FloorToInt(_spRegenElapsed / secondsPerPoint);
+        if (regenAmount <= 0)
+            return;
+
+        // 회복에 사용하고 남은시간은 보존
+        _spRegenElapsed -= regenAmount * secondsPerPoint;
+        regenAmount = Mathf.Min(regenAmount, SP.Max - SP.Current);
+        SP.TryIncreaseCurrent(regenAmount);
     }
 
     #endregion

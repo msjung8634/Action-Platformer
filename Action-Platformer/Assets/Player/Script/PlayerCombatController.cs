@@ -53,6 +53,8 @@ public class PlayerCombatController : MonoBehaviour
         _playerInput.FireBreathPerformed += OnFireBreathPerformed;
         _playerInput.FireBallPerformed += OnFireBallPerformed;
         _playerInput.IgniteSwordPerformed += OnIgniteSwordPerformed;
+
+        WaveManager.Instance.OnRestartGame += OnRestartGame;
     }
 
     void OnDisable()
@@ -67,6 +69,8 @@ public class PlayerCombatController : MonoBehaviour
         _playerInput.FireBallPerformed -= OnFireBallPerformed;
         _playerInput.FireBreathPerformed -= OnFireBreathPerformed;
         _playerInput.IgniteSwordPerformed -= OnIgniteSwordPerformed;
+
+        WaveManager.Instance.OnRestartGame -= OnRestartGame;
     }
 
     void Update()
@@ -437,6 +441,16 @@ public class PlayerCombatController : MonoBehaviour
         CancelAttack();
         _stateMachine.SetState(new DeadState());
         _playerVisual.PlayDie();
+    }
+
+    #endregion
+
+    #region OnRestartGame
+
+    void OnRestartGame()
+    {
+        IsAttacking = false;
+        ResetCombo();
     }
 
     #endregion

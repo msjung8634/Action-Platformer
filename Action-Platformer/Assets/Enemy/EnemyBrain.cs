@@ -219,15 +219,16 @@ public class EnemyBrain : MonoBehaviour
     public void EndStun()
     {
         ReleaseLock();
+        _currentState = State.Chase;
 
-        if (_moveController.TryBeginRetreat(_currentTarget))
-        {
-            _currentState = State.Retreat;
-        }
-        else
-        {
-            BeginRest();
-        }
+        //if (_moveController.TryBeginRetreat(_currentTarget))
+        //{
+        //    _currentState = State.Retreat;
+        //}
+        //else
+        //{
+        //    BeginRest();
+        //}
     }
 
     public void BeginDead()

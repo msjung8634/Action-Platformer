@@ -14,19 +14,59 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::WaveData
   Spawns:
   - SpawnTimeSeconds: 0
+    Prefab: {fileID: 6411370618602910842, guid: 6565f12e4164af447807ce2e34a25881, type: 3}
+    Side: 1
+    Offset: {x: -1, y: 0}
+  - SpawnTimeSeconds: 0
+    Prefab: {fileID: 6411370618602910842, guid: 6565f12e4164af447807ce2e34a25881, type: 3}
+    Side: 1
+    Offset: {x: 0, y: 0}
+  - SpawnTimeSeconds: 0
+    Prefab: {fileID: 6411370618602910842, guid: 6565f12e4164af447807ce2e34a25881, type: 3}
+    Side: 0
+    Offset: {x: 1, y: 0}
+  - SpawnTimeSeconds: 0
+    Prefab: {fileID: 6411370618602910842, guid: 6565f12e4164af447807ce2e34a25881, type: 3}
+    Side: 0
+    Offset: {x: 0, y: 0}
+  - SpawnTimeSeconds: 2
+    Prefab: {fileID: 6411370618602910842, guid: 6565f12e4164af447807ce2e34a25881, type: 3}
+    Side: 1
+    Offset: {x: 0, y: 0}
+  - SpawnTimeSeconds: 2.5
+    Prefab: {fileID: 6411370618602910842, guid: 6565f12e4164af447807ce2e34a25881, type: 3}
+    Side: 0
+    Offset: {x: 0, y: 0}
+  - SpawnTimeSeconds: 3
+    Prefab: {fileID: 6411370618602910842, guid: 6565f12e4164af447807ce2e34a25881, type: 3}
+    Side: 1
+    Offset: {x: 0, y: 0}
+  - SpawnTimeSeconds: 3.5
+    Prefab: {fileID: 6411370618602910842, guid: 6565f12e4164af447807ce2e34a25881, type: 3}
+    Side: 0
+    Offset: {x: 0, y: 0}
+  - SpawnTimeSeconds: 8
+    Prefab: {fileID: 7338858953070921787, guid: 5b9d59de67a209f46b7b9d9bd24d4010, type: 3}
+    Side: 1
+    Offset: {x: -1, y: 0}
+  - SpawnTimeSeconds: 8
     Prefab: {fileID: 7338858953070921787, guid: 5b9d59de67a209f46b7b9d9bd24d4010, type: 3}
     Side: 1
     Offset: {x: 0, y: 0}
-  - SpawnTimeSeconds: 2
+  - SpawnTimeSeconds: 8
+    Prefab: {fileID: 7338858953070921787, guid: 5b9d59de67a209f46b7b9d9bd24d4010, type: 3}
+    Side: 0
+    Offset: {x: 1, y: 0}
+  - SpawnTimeSeconds: 8
     Prefab: {fileID: 7338858953070921787, guid: 5b9d59de67a209f46b7b9d9bd24d4010, type: 3}
     Side: 0
     Offset: {x: 0, y: 0}
-  - SpawnTimeSeconds: 6
-    Prefab: {fileID: 6411370618602910842, guid: 6565f12e4164af447807ce2e34a25881, type: 3}
+  - SpawnTimeSeconds: 10
+    Prefab: {fileID: 7338858953070921787, guid: 5b9d59de67a209f46b7b9d9bd24d4010, type: 3}
     Side: 1
     Offset: {x: 0, y: 0}
-  - SpawnTimeSeconds: 7
-    Prefab: {fileID: 6411370618602910842, guid: 6565f12e4164af447807ce2e34a25881, type: 3}
+  - SpawnTimeSeconds: 10.5
+    Prefab: {fileID: 7338858953070921787, guid: 5b9d59de67a209f46b7b9d9bd24d4010, type: 3}
     Side: 0
     Offset: {x: 0, y: 0}
   NextWaveDelaySeconds: 5

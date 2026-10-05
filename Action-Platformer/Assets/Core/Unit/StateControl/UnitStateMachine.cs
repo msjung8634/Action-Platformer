@@ -18,6 +18,21 @@ public class UnitStateMachine : MonoBehaviour
         Hit = GetComponent<Hit>();
     }
 
+    void OnEnable()
+    {
+        WaveManager.Instance.OnRestartGame += OnRestartGame;
+    }
+
+    void OnDisable()
+    {
+        WaveManager.Instance.OnRestartGame -= OnRestartGame;
+    }
+
+    void OnRestartGame()
+    {
+        SetState(new NormalState());
+    }
+
     void Start()
     {
         SetState(new NormalState());

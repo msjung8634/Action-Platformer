@@ -1,4 +1,5 @@
 using UnityEngine;
+using static UnityEngine.Rendering.DebugUI;
 
 public enum UnitMoveDirection
 {
@@ -32,6 +33,48 @@ public class PlayerVisual : MonoBehaviour
             default:
                 break;
         }
+    }
+
+    void OnEnable()
+    {
+        WaveManager.Instance.OnRestartGame += OnRestartGame;
+    }
+
+    void OnDisable()
+    {
+        WaveManager.Instance.OnRestartGame -= OnRestartGame;
+    }
+
+    static readonly int _locomotionStateHash = Animator.StringToHash("Base Layer.Locomotion");
+    public void OnRestartGame()
+    {
+        SetFacingDirection(UnitMoveDirection.Right);
+
+        SetMoveSpeed(0f);
+        _animator.ResetTrigger(_hitHash);
+        _animator.ResetTrigger(_dieHash);
+
+        _animator.ResetTrigger(_ascendHash);
+        _animator.ResetTrigger(_descendHash);
+        _animator.ResetTrigger(_landHash);
+
+        _animator.ResetTrigger(_comboAttackHash);
+        _animator.SetInteger(_comboIndexHash, 0);
+
+        _animator.SetBool(_dashAttackHash, false);
+
+        _animator.ResetTrigger(_inAirAttackHash);
+        _animator.ResetTrigger(_inAirAttackHash);
+
+        _animator.ResetTrigger(_dodgeHash);
+
+        _animator.ResetTrigger(_fireBreathHash);
+
+        _animator.ResetTrigger(_fireBallHash);
+
+        _animator.ResetTrigger(_igniteSwordHash);
+
+        _animator.Play(_locomotionStateHash, 0, 0f);
     }
 
     static readonly int _moveSpeedHash = Animator.StringToHash("moveSpeed");

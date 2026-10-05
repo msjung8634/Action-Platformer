@@ -3,9 +3,20 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Controls;
 
 public class WaveManager : Singleton<WaveManager>
 {
+    [Header("Restart")]
+    [SerializeField] PlayerResourceManager _playerResourceManager;
+    [SerializeField] GameObject _restartPanel;
+    [SerializeField, Min(0f)] float _restartInputDelay = 0.5f;
+    bool _isGameOver;
+    bool _isRestarting;
+    float _restartInputEnableTime;
+    public event Action OnRestartGame;
+
     [Header("Spawn Points")]
     [SerializeField] Transform _leftSpawnPoint;
     [SerializeField] Transform _rightSpawnPoint;
@@ -23,17 +34,94 @@ public class WaveManager : Singleton<WaveManager>
 
     void Start()
     {
-        _gameCts = new CancellationTokenSource();
-        StartGameAsync(_gameCts.Token).Forget();
+        StartGame();
+    }
+
+    void OnEnable()
+    {
+        _playerResourceManager.OnDead += OnPlayerDead;
     }
 
     void OnDisable()
     {
+        _playerResourceManager.OnDead -= OnPlayerDead;
         StopGame();
     }
 
-    #region Start/Stop Game
+    void Update()
+    {
+        if (!_isGameOver || _isRestarting)
+            return;
 
+        if (Time.unscaledTime < _restartInputEnableTime)
+            return;
+
+        if (CheckAnyButtonPressed())
+            RestartGame();
+    }
+    bool CheckAnyButtonPressed()
+    {
+        if (Keyboard.current != null && Keyboard.current.anyKey.wasPressedThisFrame)
+        {
+            return true;
+        }
+
+        if (Gamepad.current != null)
+        {
+            foreach (var control in Gamepad.current.allControls)
+            {
+                if (control is ButtonControl button && button.wasPressedThisFrame)
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    void OnPlayerDead()
+    {
+        if (_isGameOver || IsCleared)
+            return;
+
+        _isGameOver = true;
+        StopGame();
+
+        foreach (GameObject enemy in _spawnedEnemies)
+        {
+            if (enemy == null)
+                continue;
+
+            if (enemy.TryGetComponent<EnemyBrain>(out var brain))
+                brain.enabled = false;
+        }
+
+        _restartInputEnableTime = Time.unscaledTime + _restartInputDelay;
+        _restartPanel.SetActive(true);
+    }
+
+
+    #region Start Game
+    void StartGame(bool isRestart = false)
+    {
+        if (isRestart)
+        {
+            Debug.Log("Restart!!!");
+        }
+
+        CurrentWave = 0;
+        IsCleared = false;
+
+        _isGameOver = false;
+        _isRestarting = false;
+        _restartInputEnableTime = 0f;
+
+        _restartPanel.SetActive(false);
+
+        _gameCts = new CancellationTokenSource();
+        StartGameAsync(_gameCts.Token).Forget();
+    }
     async UniTask StartGameAsync(CancellationToken token)
     {
         try
@@ -68,7 +156,31 @@ public class WaveManager : Singleton<WaveManager>
             Debug.Log("Game Canceled");
         }
     }
+    async UniTask WaveStartCountdownAsync(float durationSeconds, CancellationToken token)
+    {
+        float endTime = Time.time + durationSeconds;
 
+        while (true)
+        {
+            float remainingTime = endTime - Time.time;
+            if (remainingTime <= 0f)
+                break;
+
+            int remainingSeconds = Mathf.CeilToInt(remainingTime);
+            Debug.Log($"Wave{CurrentWave + 1} Start in {remainingSeconds}...");
+
+            float waitSeconds = remainingTime - (remainingSeconds - 1);
+            await UniTask.Delay(TimeSpan.FromSeconds(waitSeconds), cancellationToken: token);
+        }
+    }
+    bool IsAllEnemiesRemoved()
+    {
+        _spawnedEnemies.RemoveAll(enemy => enemy == null || !enemy.activeInHierarchy);
+        return _spawnedEnemies.Count == 0;
+    }
+
+    #endregion
+    #region Stop Game
     public void StopGame()
     {
         if (_gameCts == null)
@@ -79,14 +191,7 @@ public class WaveManager : Singleton<WaveManager>
         _gameCts = null;
     }
 
-    bool IsAllEnemiesRemoved()
-    {
-        _spawnedEnemies.RemoveAll(enemy => enemy == null || !enemy.activeInHierarchy);
-        return _spawnedEnemies.Count == 0;
-    }
-
     #endregion
-
     #region StartWave
 
     async UniTask StartWaveAsync(WaveData waveData, CancellationToken token)
@@ -129,22 +234,33 @@ public class WaveManager : Singleton<WaveManager>
     }
 
     #endregion
+    #region Restart Game
 
-    async UniTask WaveStartCountdownAsync(float durationSeconds, CancellationToken token)
+    public void RestartGame()
     {
-        float endTime = Time.time + durationSeconds;
+        if (_isRestarting)
+            return;
 
-        while (true)
+        _isRestarting = true;
+        StopGame();
+
+        // 적 제거
+        foreach (GameObject enemy in _spawnedEnemies)
         {
-            float remainingTime = endTime - Time.time;
-            if (remainingTime <= 0f)
-                break;
+            if (enemy == null)
+                continue;
 
-            int remainingSeconds = Mathf.CeilToInt(remainingTime);
-            Debug.Log($"Wave{CurrentWave + 1} Start in {remainingSeconds}...");
-
-            float waitSeconds = remainingTime - (remainingSeconds - 1);
-            await UniTask.Delay(TimeSpan.FromSeconds(waitSeconds), cancellationToken: token);
+            enemy.SetActive(false);
+            Destroy(enemy);
         }
+        _spawnedEnemies.Clear();
+
+        // callback
+        OnRestartGame?.Invoke();
+        
+        _restartPanel.SetActive(false);
+        StartGame(true);
     }
+
+    #endregion
 }

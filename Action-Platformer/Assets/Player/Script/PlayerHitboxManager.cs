@@ -37,6 +37,22 @@ public class PlayerHitboxManager : MonoBehaviour
     [SerializeField] Vector2 _fireBreath_Size = new(0.1f, 0.8f);
     [SerializeField] AttackData _fireBreath_Data;
 
+    void OnEnable()
+    {
+        WaveManager.Instance.OnRestartGame += OnRestartGame;
+    }
+
+    void OnDisable()
+    {
+        WaveManager.Instance.OnRestartGame -= OnRestartGame;
+    }
+
+    void OnRestartGame()
+    {
+        ClearCachedTarget();
+        SetFacingDirection(UnitMoveDirection.Right);
+    }
+
     HashSet<IDamageable> _hitTargetCache = new();
     public void ClearCachedTarget()
     {

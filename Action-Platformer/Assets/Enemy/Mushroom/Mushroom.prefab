@@ -964,7 +964,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: '::'
   _searchInterval: 0.5
   _lockDuration: 0.1
-  _restDurationRange: {x: 0.5, y: 1.5}
+  _restDurationRange: {x: 0.5, y: 1}
   _currentState: 0
   _currentTarget: {fileID: 0}
 --- !u!114 &3687295932290365077

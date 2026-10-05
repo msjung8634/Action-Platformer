@@ -13,7 +13,7 @@ public class EnemyResourceManager : MonoBehaviour, IHpHandler
 
     void Awake()
     {
-        HP = new Resource(_statData.MaxHP);
+        HP = new Resource(_statData.MaxHP, _statData.MaxHP);
     }
 
     void OnEnable()
@@ -28,31 +28,21 @@ public class EnemyResourceManager : MonoBehaviour, IHpHandler
 
     #region HP
 
-    public void IncreaseCurrentHP(int amount)
+    public bool TryConsumeHP(int amount)
     {
-        HP.TryIncreaseCurrent(amount);
-    }
-    public void DecreaseCurrentHP(int amount)
-    {
-        if (HP.TryDecreaseCurrent(amount))
+        if (!HP.TryDecreaseCurrent(amount))
+            return false;
+
+        if (HP.Current == 0)
         {
-            if (HP.Current == 0)
-            {
-                OnDead?.Invoke();
-            }
-            else
-            {
-                OnHit?.Invoke();
-            }
+            OnDead?.Invoke();
         }
-    }
-    public void IncreaseMaxHP(int amount)
-    {
-        HP.TryIncreaseMax(amount);
-    }
-    public void DecreaseMaxHP(int amount)
-    {
-        HP.TryDecreaseMax(amount);
+        else
+        {
+            OnHit?.Invoke();
+        }
+
+        return true;
     }
 
     void HpChanged(int current, int max)

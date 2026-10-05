@@ -10,7 +10,7 @@ public class PlayerMoveController : MonoBehaviour
     Rigidbody2D _rigidbody;
     PlayerVisual _playerVisual;
     PlayerCombatController _playerCombatController;
-    PlayerResourceManager _resourceManager;
+    [SerializeField] PlayerResourceManager _resourceManager;
     [SerializeField] EnvironmentChecker _environmentChecker;
     [SerializeField] UnitStateMachine _stateMachine;
     [SerializeField] PlayerHitboxManager _playerHitboxManager;
@@ -52,9 +52,12 @@ public class PlayerMoveController : MonoBehaviour
     public bool IsAirAttacking { get; private set; }
     [SerializeField] float _airAttackStopDuration = 0.1f;
 
-    float _originalGravityScale;
     Vector2 _moveDirection;
     bool _isMovable => _stateMachine?.Move?.CurrentState.Equals(Move.State.Movable) ?? false;
+
+    float _initialGravityScale;
+    int _initialLayer;
+    Vector3 _initialPosition;
 
     void Awake()
     {
@@ -62,12 +65,13 @@ public class PlayerMoveController : MonoBehaviour
         TryGetComponent(out _rigidbody);
         TryGetComponent(out _playerVisual);
         TryGetComponent(out _playerCombatController);
-        TryGetComponent(out _resourceManager);
     }
 
     void Start()
     {
-        _originalGravityScale = _rigidbody.gravityScale;
+        _initialGravityScale = _rigidbody.gravityScale;
+        _initialLayer = gameObject.layer;
+        _initialPosition = transform.position;
     }
 
     void OnEnable()
@@ -79,6 +83,8 @@ public class PlayerMoveController : MonoBehaviour
         _playerInput.JumpCanceled += OnJumpCanceled;
 
         _playerInput.DodgePerformed += OnDodgePerformed;
+
+        WaveManager.Instance.OnRestartGame += OnRestartGame;
     }
 
     void OnDisable()
@@ -90,6 +96,8 @@ public class PlayerMoveController : MonoBehaviour
         _playerInput.JumpCanceled -= OnJumpCanceled;
 
         _playerInput.DodgePerformed -= OnDodgePerformed;
+
+        WaveManager.Instance.OnRestartGame -= OnRestartGame;
     }
 
     void Update()
@@ -237,7 +245,7 @@ public class PlayerMoveController : MonoBehaviour
         switch (_jumpPhase)
         {
             case JumpPhase.Grounded:
-                _rigidbody.gravityScale = _originalGravityScale;
+                _rigidbody.gravityScale = _initialGravityScale;
                 break;
 
             case JumpPhase.Ascend:
@@ -259,7 +267,7 @@ public class PlayerMoveController : MonoBehaviour
 
     void OnDodgePerformed()
     {
-        if (IsDodging)
+        if (IsDodging || _resourceManager.HP.Current == 0)
             return;
 
         if (_playerCombatController.IsAttacking)
@@ -267,16 +275,14 @@ public class PlayerMoveController : MonoBehaviour
             _playerCombatController.CancelAttack();
         }
 
+        gameObject.layer = LayerMask.NameToLayer("Ghost");
+        _stateMachine.SetState(new DodgeState());
         _playerVisual.PlayDodge();
+        StartDodgeMove();
     }
 
-    void AnimEvent_StartDodge()
-    {
-        gameObject.layer = LayerMask.NameToLayer("Ghost");
-        StartDodge();
-    }
     Vector2 _dodgeDirection;
-    public void StartDodge()
+    public void StartDodgeMove()
     {
         IsDodging = true;
 
@@ -304,18 +310,9 @@ public class PlayerMoveController : MonoBehaviour
         _rigidbody.gravityScale = 0f;
     }
 
-    void AnimEvent_SetDodgeState()
-    {
-        _stateMachine.SetState(new DodgeState());
-    }
-
-    void AnimEvent_SetNormalState()
-    {
-        _stateMachine.SetState(new NormalState());
-    }
-
     void AnimEvent_EndDodge()
     {
+        _stateMachine.SetState(new NormalState());
         gameObject.layer = LayerMask.NameToLayer("Player");
         EndDodge();
     }
@@ -324,7 +321,7 @@ public class PlayerMoveController : MonoBehaviour
         IsDodging = false;
 
         _rigidbody.linearVelocity = Vector2.zero;
-        _rigidbody.gravityScale = _originalGravityScale;
+        _rigidbody.gravityScale = _initialGravityScale;
     }
 
     #endregion
@@ -368,6 +365,30 @@ public class PlayerMoveController : MonoBehaviour
         // 이후 JumpPhase에 따라 중력이 다시 결정됨
         UpdateJumpPhase();
         UpdateJumpGravity();
+    }
+
+    #endregion
+    #region OnRestartGame
+
+    void OnRestartGame()
+    {
+        // 이전 비동기 작업부터 취소
+        EndAirAttackTime();
+        IsDodging = false;
+        _dodgeDirection = Vector2.zero;
+        _moveDirection = Vector2.zero;
+        _jumpPhase = JumpPhase.None;
+
+        // layer
+        gameObject.layer = _initialLayer;
+
+        // 
+        transform.position = _initialPosition;
+
+        // rigidbody
+        _rigidbody.linearVelocity = Vector2.zero;
+        _rigidbody.angularVelocity = 0f;
+        _rigidbody.gravityScale = _initialGravityScale;
     }
 
     #endregion

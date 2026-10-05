@@ -33,15 +33,12 @@ public abstract class ResourceBarUI : MonoBehaviour
     protected virtual void OnEnable()
     {
         Subscribe();
-
-        // 현재 값 즉시 반영
-        if (_started)
-            RefreshImmediate();
+        RefreshImmediate();
+        WaveManager.Instance.OnRestartGame += RefreshImmediate;
     }
 
     protected virtual void Start()
     {
-        _started = true;
         RefreshImmediate();
     }
 
@@ -49,6 +46,8 @@ public abstract class ResourceBarUI : MonoBehaviour
     {
         Unsubscribe();
         _isAnimating = false;
+
+        WaveManager.Instance.OnRestartGame -= RefreshImmediate;
     }
 
     void InitializeSlider(Slider slider)
@@ -73,7 +72,7 @@ public abstract class ResourceBarUI : MonoBehaviour
         _isAnimating = false;
     }
 
-    protected void OnResourceChanged(int current, int max)
+    protected virtual void OnResourceChanged(int current, int max)
     {
         float nextValue = Mathf.Clamp01((float)current / max);
 
