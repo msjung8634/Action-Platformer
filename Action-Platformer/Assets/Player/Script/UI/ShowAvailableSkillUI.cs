@@ -30,18 +30,18 @@ public class ShowAvailableSkillUI : MonoBehaviour
     [Space(10)]
     [SerializeField] GameObject _meleeAttack;
     [SerializeField] AttackData _meleeAttackData;
-    [Space(10)]
-    [SerializeField] GameObject _parry;
-    [SerializeField] AttackData _parryData;
+    //[Space(10)]
+    //[SerializeField] GameObject _parry;
+    //[SerializeField] AttackData _parryData;
     [Space(10)]
     [SerializeField] GameObject _fireBreath;
     [SerializeField] AttackData _fireBreathData;
     [Space(10)]
     [SerializeField] GameObject _fireBall;
     [SerializeField] AttackData _fireBallData;
-    [Space(10)]
-    [SerializeField] GameObject _igniteSword;
-    [SerializeField] AttackData _igniteSwordData;
+    //[Space(10)]
+    //[SerializeField] GameObject _igniteSword;
+    //[SerializeField] AttackData _igniteSwordData;
 
     [Header("Color")]
     [SerializeField] Color _spNotEnough;
@@ -134,7 +134,7 @@ public class ShowAvailableSkillUI : MonoBehaviour
         SetSpActionColor(_jump, current >= _jumpData.SpConsumption);
         SetSpActionColor(_dodge, current >= _dodgeData.SpConsumption);
         SetSpActionColor(_meleeAttack, current >= _meleeAttackData.SpConsumption);
-        SetSpActionColor(_parry, current >= _parryData.SpConsumption);
+        //SetSpActionColor(_parry, current >= _parryData.SpConsumption);
     }
     void SetSpActionColor(GameObject root, bool isEnough)
     {
@@ -149,7 +149,7 @@ public class ShowAvailableSkillUI : MonoBehaviour
     {
         SetFpActionColor(_fireBreath, current >= _fireBreathData.FpConsumption);
         SetFpActionColor(_fireBall, current >= _fireBreathData.FpConsumption);
-        SetFpActionColor(_igniteSword, current >= _igniteSwordData.FpConsumption);
+        //SetFpActionColor(_igniteSword, current >= _igniteSwordData.FpConsumption);
     }
     void SetFpActionColor(GameObject root, bool isEnough)
     {
