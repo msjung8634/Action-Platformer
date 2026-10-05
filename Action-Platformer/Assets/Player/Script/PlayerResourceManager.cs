@@ -1,4 +1,4 @@
-using Unity.VisualScripting;
+using System;
 using UnityEngine;
 
 public class PlayerResourceManager : MonoBehaviour, IHpHandler, ISpHandler
@@ -8,10 +8,29 @@ public class PlayerResourceManager : MonoBehaviour, IHpHandler, ISpHandler
     [field:SerializeField] public Resource HP { get; private set; }
     [field: SerializeField] public Resource SP { get; private set; }
 
+    public event Action<int, int> OnHpChanged;
+    public event Action<int, int> OnSpChanged;
+
+    public event Action OnHit;
+    public event Action OnDead;
+
+
     void Awake()
     {
         HP = new Resource(_statData.MaxHP);
         SP = new Resource(_statData.MaxSP);
+    }
+
+    void OnEnable()
+    {
+        HP.OnChanged += HpChanged;
+        SP.OnChanged += SpChanged;
+    }
+
+    void OnDisable()
+    {
+        HP.OnChanged -= HpChanged;
+        SP.OnChanged -= SpChanged;
     }
 
     #region HP
@@ -24,8 +43,14 @@ public class PlayerResourceManager : MonoBehaviour, IHpHandler, ISpHandler
     {
         if (HP.TryDecreaseCurrent(amount))
         {
-            // TODO : HP 0되면 사망
-
+            if (HP.Current == 0)
+            {
+                OnDead?.Invoke();
+            }
+            else
+            {
+                OnHit?.Invoke();
+            }
         }
     }
     public void IncreaseMaxHP(int amount)
@@ -37,6 +62,11 @@ public class PlayerResourceManager : MonoBehaviour, IHpHandler, ISpHandler
         HP.TryDecreaseMax(amount);
     }
 
+    void HpChanged(int current, int max)
+    {
+        OnHpChanged?.Invoke(current, max);
+    }
+
     #endregion
     #region SP
 
@@ -46,10 +76,7 @@ public class PlayerResourceManager : MonoBehaviour, IHpHandler, ISpHandler
     }
     public void DecreaseCurrentSP(int amount)
     {
-        if (SP.TryDecreaseCurrent(amount))
-        {
-            // TODO : SP 0되면 탈진 (2초간 SP재생 중단)
-        }
+        SP.TryDecreaseCurrent(amount);
     }
     public void IncreaseMaxSP(int amount)
     {
@@ -58,6 +85,11 @@ public class PlayerResourceManager : MonoBehaviour, IHpHandler, ISpHandler
     public void DecreaseMaxSP(int amount)
     {
         SP.TryDecreaseMax(amount);
+    }
+
+    void SpChanged(int current, int max)
+    {
+        OnSpChanged?.Invoke(current, max);
     }
 
     #endregion

@@ -1,3 +1,5 @@
+using Mono.Cecil.Cil;
+using System;
 using UnityEngine;
 
 public class EnemyResourceManager : MonoBehaviour, IHpHandler
@@ -5,6 +7,9 @@ public class EnemyResourceManager : MonoBehaviour, IHpHandler
     [SerializeField] EnemyStat _statData;
 
     [field: SerializeField] public Resource HP { get; private set; }
+
+    public event Action OnHit;
+    public event Action OnDead;
 
     void Awake()
     {
@@ -21,7 +26,14 @@ public class EnemyResourceManager : MonoBehaviour, IHpHandler
     {
         if (HP.TryDecreaseCurrent(amount))
         {
-            // TODO : HP 0되면 사망
+            if (HP.Current == 0)
+            {
+                OnDead?.Invoke();
+            }
+            else
+            {
+                OnHit?.Invoke();
+            }
         }
     }
     public void IncreaseMaxHP(int amount)

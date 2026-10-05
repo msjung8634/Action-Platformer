@@ -149,7 +149,6 @@ public class NecromancerCombatController : EnemyCombatControllerBase
         };
 
         CombatManager.Instance.ProcessHit(hitData);
-        Debug.Log($"{hitData}");
     }
 
     void AnimEvent_MagicMissileEnd()

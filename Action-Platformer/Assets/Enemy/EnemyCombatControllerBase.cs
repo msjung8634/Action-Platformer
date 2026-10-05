@@ -5,8 +5,8 @@ public class EnemyCombatControllerBase : MonoBehaviour
     [Header("Refrences")]
     protected Rigidbody2D _rigidbody;
     protected EnemyVisualBase _visual;
-    protected EnemyResourceManager _resourceManager;
     protected EnemyMoveControllerBase _moveController;
+    [SerializeField] protected EnemyResourceManager _resourceManager;
     [SerializeField] protected EnvironmentChecker _environmentChecker;
     [SerializeField] protected UnitStateMachine _stateMachine;
     [SerializeField] protected EnemyHitboxManagerBase _hitboxManager;
@@ -25,7 +25,6 @@ public class EnemyCombatControllerBase : MonoBehaviour
         TryGetComponent(out _rigidbody);
         TryGetComponent(out _visual);
         TryGetComponent(out _moveController);
-        TryGetComponent(out _resourceManager);
     }
 
     void Update()

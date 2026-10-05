@@ -40,6 +40,18 @@ public class PlayerVisual : MonoBehaviour
         _animator.SetFloat(_moveSpeedHash, speed);
     }
 
+    static readonly int _hitHash = Animator.StringToHash("hit");
+    public void PlayHit()
+    {
+        _animator.SetTrigger(_hitHash);
+    }
+
+    static readonly int _dieHash = Animator.StringToHash("die");
+    public void PlayDie()
+    {
+        _animator.SetTrigger(_dieHash);
+    }
+
     static readonly int _ascendHash = Animator.StringToHash("ascend");
     static readonly int _descendHash = Animator.StringToHash("descend");
     static readonly int _landHash = Animator.StringToHash("land");

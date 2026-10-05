@@ -89,7 +89,6 @@ public class PlayerHitboxManager : MonoBehaviour
             };
 
             CombatManager.Instance.ProcessHit(hitData);
-            Debug.Log($"{hitData}");
         }
     }
 

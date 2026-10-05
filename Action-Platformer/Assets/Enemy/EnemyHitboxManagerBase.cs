@@ -59,7 +59,6 @@ public class EnemyHitboxManagerBase : MonoBehaviour
             };
 
             CombatManager.Instance.ProcessHit(hitData);
-            Debug.Log($"{hitData}");
         }
     }
 }

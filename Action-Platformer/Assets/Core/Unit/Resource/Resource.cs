@@ -33,6 +33,7 @@ public class Resource
 
         Current = Mathf.Max(Current - val, 0);
         OnChanged?.Invoke(Current, Max);
+
         return true;
     }
 

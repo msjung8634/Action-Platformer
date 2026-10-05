@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerCombatController : MonoBehaviour
@@ -7,7 +8,7 @@ public class PlayerCombatController : MonoBehaviour
     Rigidbody2D _rigidbody;
     PlayerVisual _playerVisual;
     PlayerMoveController _playerMoveController;
-    PlayerResourceManager _resourceManager;
+    [SerializeField] PlayerResourceManager _resourceManager;
     [SerializeField] EnvironmentChecker _environmentChecker;
     [SerializeField] UnitStateMachine _stateMachine;
     [SerializeField] PlayerHitboxManager _playerHitboxManager;
@@ -39,11 +40,13 @@ public class PlayerCombatController : MonoBehaviour
         TryGetComponent(out _rigidbody);
         TryGetComponent(out _playerVisual);
         TryGetComponent(out _playerMoveController);
-        TryGetComponent(out _resourceManager);
     }
 
     void OnEnable()
     {
+        _resourceManager.OnHit += OnHit;
+        _resourceManager.OnDead += OnDead;
+
         if (_playerInput == null)
             return;
 
@@ -55,6 +58,9 @@ public class PlayerCombatController : MonoBehaviour
 
     void OnDisable()
     {
+        _resourceManager.OnHit -= OnHit;
+        _resourceManager.OnDead -= OnDead;
+
         if (_playerInput == null)
             return;
 
@@ -369,7 +375,6 @@ public class PlayerCombatController : MonoBehaviour
         };
 
         CombatManager.Instance.ProcessHit(hitData);
-        Debug.Log($"{hitData}");
     }
 
     void AnimEvent_FireBallEnd()
@@ -407,6 +412,31 @@ public class PlayerCombatController : MonoBehaviour
     #endregion
 
     #region Parry
+
+    #endregion
+
+    #region OnHit
+
+    void OnHit()
+    {
+        _stateMachine.SetState(new StunState());
+        _playerVisual.PlayHit();
+    }
+
+    void AnimEvent_HitEnd()
+    {
+        _stateMachine.SetState(new NormalState());
+    }
+
+    #endregion
+
+    #region OnDead
+
+    void OnDead()
+    {
+        _stateMachine.SetState(new DeadState());
+        _playerVisual.PlayDie();
+    }
 
     #endregion
 }

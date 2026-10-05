@@ -8,10 +8,5 @@ public class CombatManager : Singleton<CombatManager>
             return;
 
         hitData.Target.TakeDamage(hitData);
-
-        if (hitData.AttackData == null)
-            return;
-
-        FeedbackManager.Instance.Apply(hitData.AttackData);
     }
 }

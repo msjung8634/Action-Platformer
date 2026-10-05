@@ -17,7 +17,16 @@ public class DamageReceiver : MonoBehaviour, IDamageable
 
     public void TakeDamage(HitData hitData)
     {
+        if (StateMachine.Hit.CurrentState == Hit.State.NonHittable)
+            return;
+
         _hpHandler?.DecreaseCurrentHP(hitData.AttackData.Damage);
         _spHandler?.DecreaseCurrentSP(hitData.AttackData.SpConsumption);
+        Debug.Log($"{hitData}");
+
+        if (hitData.AttackData == null)
+            return;
+
+        FeedbackManager.Instance.Apply(hitData.AttackData);
     }
 }
