@@ -25,6 +25,7 @@ public class PlayerResourceManager : MonoBehaviour, IHpHandler, ISpHandler
         if (HP.TryDecreaseCurrent(amount))
         {
             // TODO : HP 0되면 사망
+
         }
     }
     public void IncreaseMaxHP(int amount)

@@ -12,6 +12,13 @@ public class NecromancerCombatController : EnemyCombatControllerBase
     [SerializeField, Min(0f)] float _attackRange = 3f;
     [SerializeField, Min(0f)] float _attackHeightTolerance = 3f;
 
+    [Header("MagicMissile")]
+    [SerializeField] Transform _spawnPosition;
+    [SerializeField] GameObject _projectilePrefab;
+    [SerializeField] AttackData _projectileData;
+    [SerializeField] LayerMask _targetLayer;
+    [SerializeField] float _flySpeed;
+
     [Space(10)]
     [SerializeField] AttackType _selectedAttack;
 
@@ -102,10 +109,47 @@ public class NecromancerCombatController : EnemyCombatControllerBase
         visual.PlayMagicMissile();
     }
 
-    void AnimEvent_MagicMissileSpawnProjectile()
+    void AnimEvent_SpawnMagicMissile()
     {
-        // TODO : Prefab 생성해 날리기
-        Debug.Log("매직미사일!!");
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        if (player == null)
+            return;
+
+        DamageReceiver receiver = player.GetComponentInChildren<DamageReceiver>();
+        Vector2 targetPosition = receiver.AimPoint.position;
+        Vector2 spawnPoint = _spawnPosition.position;
+
+        GameObject projectileObj = Instantiate(_projectilePrefab, spawnPoint, Quaternion.identity);
+        if (projectileObj.TryGetComponent(out ProjectileController controller))
+        {
+            controller.Initialize(
+                caster: transform,
+                targetPosition: targetPosition,
+                targetLayerMask: _targetLayer,
+                speed: _flySpeed,
+                onHit: OnFireballHit,
+                ignoreYOffset: false
+            );
+        }
+    }
+
+    void OnFireballHit(ProjectileController projectile, Collider2D hitbox)
+    {
+        if (!hitbox.TryGetComponent<IDamageable>(out var target))
+            return;
+
+        Vector2 hitPoint = hitbox.ClosestPoint(projectile.transform.position);
+        var hitData = new HitData
+        {
+            Attacker = projectile.Owner.root.gameObject,
+            Target = target,
+            HitPoint = hitPoint,
+            HitDirection = projectile.FlyDirection,
+            AttackData = _projectileData
+        };
+
+        CombatManager.Instance.ProcessHit(hitData);
+        Debug.Log($"{hitData}");
     }
 
     void AnimEvent_MagicMissileEnd()

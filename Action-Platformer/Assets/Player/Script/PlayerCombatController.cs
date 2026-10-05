@@ -1,4 +1,3 @@
-using System.Resources;
 using UnityEngine;
 
 public class PlayerCombatController : MonoBehaviour
@@ -23,6 +22,13 @@ public class PlayerCombatController : MonoBehaviour
     bool _isComboWindowOpen;
     bool _isComboBuffered;
     float _comboAttackInputBufferTimer;
+
+    [Header("Fireball")]
+    [SerializeField] Transform _spawnPosition;
+    [SerializeField] GameObject _projectilePrefab;
+    [SerializeField] AttackData _projectileData;
+    [SerializeField] LayerMask _targetLayer;
+    [SerializeField] float _flySpeed;
 
     [Header("Parry")]
     bool b;
@@ -325,7 +331,45 @@ public class PlayerCombatController : MonoBehaviour
 
     void AnimEvent_SpawnFireBall()
     {
-        // TODO : Prefab 생성해 날리기
+        Vector2 dir = _playerVisual.FaceDirection == UnitMoveDirection.Right
+            ? Vector2.right
+            : Vector2.left;
+
+        Vector2 spawnPoint = _spawnPosition.position;
+
+        GameObject projectileObj = Instantiate(_projectilePrefab, spawnPoint, Quaternion.identity);
+        if (projectileObj.TryGetComponent(out ProjectileController controller))
+        {
+            Vector2 targetPosition = spawnPoint + dir;
+
+            controller.Initialize(
+                caster: transform,
+                targetPosition: targetPosition,
+                targetLayerMask: _targetLayer,
+                speed: _flySpeed,
+                onHit: OnFireballHit,
+                ignoreYOffset: true
+            );
+        }
+    }
+
+    void OnFireballHit(ProjectileController projectile, Collider2D hitbox)
+    {
+        if (!hitbox.TryGetComponent<IDamageable>(out var target))
+            return;
+
+        Vector2 hitPoint = hitbox.ClosestPoint(projectile.transform.position);
+        var hitData = new HitData
+        {
+            Attacker = projectile.Owner.root.gameObject,
+            Target = target,
+            HitPoint = hitPoint,
+            HitDirection = projectile.FlyDirection,
+            AttackData = _projectileData
+        };
+
+        CombatManager.Instance.ProcessHit(hitData);
+        Debug.Log($"{hitData}");
     }
 
     void AnimEvent_FireBallEnd()

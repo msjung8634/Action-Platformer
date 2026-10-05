@@ -110,7 +110,6 @@ public class MushroomCombatController : EnemyCombatControllerBase
     {
         var visual = _visual as MushroomVisual;
         visual.PlayAttack1();
-        Debug.Log("Start Attack1");
     }
 
     void AnimEvent_CheckAttack1Hit()
@@ -131,7 +130,6 @@ public class MushroomCombatController : EnemyCombatControllerBase
     {
         var visual = _visual as MushroomVisual;
         visual.PlayAttack2();
-        Debug.Log("Start Attack2");
     }
 
     void AnimEvent_CheckAttack2Hit()
