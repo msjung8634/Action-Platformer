@@ -46,3 +46,4 @@ MonoBehaviour:
     Side: 0
     Offset: {x: 0, y: 0}
   NextWaveDelaySeconds: 5
+  StartMsg: "\uD3EC\uC704\uB9DD\uC774 \uC881\uD600\uC9C4\uB2E4..."

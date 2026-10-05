@@ -148,7 +148,7 @@ public class ShowAvailableSkillUI : MonoBehaviour
     void OnFpChanged(int current, int _ = 0)
     {
         SetFpActionColor(_fireBreath, current >= _fireBreathData.FpConsumption);
-        SetFpActionColor(_fireBall, current >= _fireBreathData.FpConsumption);
+        SetFpActionColor(_fireBall, current >= _fireBallData.FpConsumption);
         //SetFpActionColor(_igniteSword, current >= _igniteSwordData.FpConsumption);
     }
     void SetFpActionColor(GameObject root, bool isEnough)

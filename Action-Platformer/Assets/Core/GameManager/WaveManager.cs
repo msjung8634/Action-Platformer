@@ -2,6 +2,7 @@ using Cysharp.Threading.Tasks;
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Controls;
@@ -87,6 +88,7 @@ public class WaveManager : Singleton<WaveManager>
 
         _isGameOver = true;
         StopGame();
+        NoticeUI.Instance.Clear();
 
         foreach (GameObject enemy in _spawnedEnemies)
         {
@@ -107,7 +109,7 @@ public class WaveManager : Singleton<WaveManager>
     {
         if (isRestart)
         {
-            Debug.Log("Restart!!!");
+            NoticeUI.Instance.ShowMsg($"어디서 본듯 한 놈이군...");
         }
 
         CurrentWave = 0;
@@ -126,20 +128,18 @@ public class WaveManager : Singleton<WaveManager>
     {
         try
         {
-            Debug.Log("Game Start!");
-
-            // Wave 시작까지 대기
             await WaveStartCountdownAsync(_startDelaySeconds, token);
 
             for (int i = 0; i < _waveDatas.Length; i++)
             {
                 CurrentWave = i + 1;
-                Debug.Log($"Wave{CurrentWave} Start!");
+                NoticeUI.Instance.ShowMsg($"{CurrentWave}번째 전투");
+                NoticeUI.Instance.ShowMsg($"{_waveDatas[i].StartMsg}");
 
                 WaveData waveData = _waveDatas[i];
                 await StartWaveAsync(waveData, token);
                 await UniTask.WaitUntil(IsAllEnemiesRemoved, cancellationToken: token);
-                Debug.Log($"Wave{CurrentWave} Clear!");
+                NoticeUI.Instance.ShowMsg($"모든 적 처치");
 
                 if (i == _waveDatas.Length - 1)
                     break;
@@ -149,15 +149,18 @@ public class WaveManager : Singleton<WaveManager>
             }
 
             IsCleared = true;
-            Debug.Log("Game Clear!");
+            NoticeUI.Instance.ShowMsg($"간만에 실력이 좋은놈이 왔군...");
         }
         catch (OperationCanceledException)
         {
-            Debug.Log("Game Canceled");
+            
         }
     }
     async UniTask WaveStartCountdownAsync(float durationSeconds, CancellationToken token)
     {
+        NoticeUI.Instance.ShowMsg($"다음 웨이브 시작까지...");
+        await UniTask.WaitUntil(() => !NoticeUI.Instance.IsBusy, cancellationToken: token);
+
         float endTime = Time.time + durationSeconds;
 
         while (true)
@@ -167,7 +170,7 @@ public class WaveManager : Singleton<WaveManager>
                 break;
 
             int remainingSeconds = Mathf.CeilToInt(remainingTime);
-            Debug.Log($"Wave{CurrentWave + 1} Start in {remainingSeconds}...");
+            NoticeUI.Instance.ShowCountdown(remainingSeconds);
 
             float waitSeconds = remainingTime - (remainingSeconds - 1);
             await UniTask.Delay(TimeSpan.FromSeconds(waitSeconds), cancellationToken: token);
@@ -243,6 +246,7 @@ public class WaveManager : Singleton<WaveManager>
 
         _isRestarting = true;
         StopGame();
+        NoticeUI.Instance.Clear();
 
         // 적 제거
         foreach (GameObject enemy in _spawnedEnemies)
