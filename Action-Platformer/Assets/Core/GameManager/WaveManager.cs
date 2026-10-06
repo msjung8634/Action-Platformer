@@ -149,6 +149,7 @@ public class WaveManager : Singleton<WaveManager>
 
             NoticeUI.Instance.ShowMsg($"간만에 실력 좋은놈이 왔군 . . .");
             NoticeUI.Instance.ShowMsg($"또 보자고 애송이 . . .");
+            NoticeUI.Instance.ShowMsg($"Game Clear");
 
             await UniTask.WaitUntil(() => !NoticeUI.Instance.IsBusy, cancellationToken: token);
             

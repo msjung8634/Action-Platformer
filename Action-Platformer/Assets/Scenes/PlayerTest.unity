@@ -18669,7 +18669,6 @@ MonoBehaviour:
   _restartInputDelay: 1.2
   _leftSpawnPoint: {fileID: 1801583232}
   _rightSpawnPoint: {fileID: 1471585758}
-  _startDelaySeconds: 3
   _waveDatas:
   - {fileID: 11400000, guid: ca5f709fd8fd93245a74d339c90e2630, type: 2}
   - {fileID: 11400000, guid: f408824b01d14534b8362360350a0d03, type: 2}
