@@ -65,8 +65,8 @@ public class PlayerVisual : MonoBehaviour
 
         _animator.SetBool(_dashAttackHash, false);
 
-        _animator.ResetTrigger(_inAirAttackHash);
-        _animator.ResetTrigger(_inAirAttackHash);
+        _animator.ResetTrigger(_upSlashAttackHash);
+        _animator.ResetTrigger(_downSlashAttackHash);
 
         _animator.ResetTrigger(_dodgeHash);
 
@@ -127,14 +127,24 @@ public class PlayerVisual : MonoBehaviour
         _animator.SetBool(_dashAttackHash, value);
     }
 
-    static readonly int _inAirAttackHash = Animator.StringToHash("inAirAttack");
-    public void PlayInAirAttack()
+    static readonly int _downSlashAttackHash = Animator.StringToHash("downSlashAttack");
+    public void PlayDownSlashAttack()
     {
-        _animator.SetTrigger(_inAirAttackHash);
+        _animator.SetTrigger(_downSlashAttackHash);
     }
-    public void ResetInAirAttack()
+    public void ResetDownSlashAttack()
     {
-        _animator.ResetTrigger(_inAirAttackHash);
+        _animator.ResetTrigger(_downSlashAttackHash);
+    }
+
+    static readonly int _upSlashAttackHash = Animator.StringToHash("upSlashAttack");
+    public void PlayUpSlashAttack()
+    {
+        _animator.SetTrigger(_upSlashAttackHash);
+    }
+    public void ResetUpSlashAttack()
+    {
+        _animator.ResetTrigger(_upSlashAttackHash);
     }
 
     static readonly int _dodgeHash = Animator.StringToHash("dodge");

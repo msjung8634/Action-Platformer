@@ -159,6 +159,5 @@ public class ShowAvailableSkillUI : MonoBehaviour
             image.color = color;
         }
     }
-
 }
 

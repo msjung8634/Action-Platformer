@@ -14,10 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DodgeData
   <SfxClip>k__BackingField: {fileID: 0}
   <SfxVolume>k__BackingField: 1
-  <ShakeStrength>k__BackingField: 0.1
+  <ShakeStrength>k__BackingField: 0.06
   <ShakeCount>k__BackingField: 1
   <ShakeInterval>k__BackingField: 0.05
-  <StopTimeDuration>k__BackingField: 0.01
-  <SlowTimeDuration>k__BackingField: 0.05
+  <StopTimeDuration>k__BackingField: 0
+  <SlowTimeDuration>k__BackingField: 0
   <SlowTimeScale>k__BackingField: 0.1
-  <SpConsumption>k__BackingField: 40
+  <SpConsumption>k__BackingField: 30

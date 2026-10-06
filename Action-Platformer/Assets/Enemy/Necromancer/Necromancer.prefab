@@ -570,6 +570,11 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  _shakeDuration: 0.2
+  _shakeStrength: {x: 4, y: 2}
+  _shakeVibrato: 8
+  _shakeMultiplierStep: 0.3
+  _maxShakeMultiplier: 2.5
 --- !u!1 &4250218463758896792
 GameObject:
   m_ObjectHideFlags: 0
@@ -1027,7 +1032,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7338858953070921787}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 5.22, y: -3, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -1138,9 +1143,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 905a7b7e79a50f245a50b2b476668530, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  _searchInterval: 0.5
-  _lockDuration: 0.1
-  _restDurationRange: {x: 0.5, y: 1.5}
+  _searchInterval: 1
+  _lockDuration: 0.8
+  _retreatWhenLockDenied: 1
+  _restDurationRange: {x: 0.6, y: 0.8}
   _currentState: 0
   _currentTarget: {fileID: 0}
 --- !u!114 &3183668636174556965
@@ -1173,10 +1179,10 @@ MonoBehaviour:
   _stateMachine: {fileID: 471050665027572358}
   _hitboxManager: {fileID: 177954736906982195}
   _chaseSpeed: 3
-  <StopDistance>k__BackingField: 3
+  <StopDistance>k__BackingField: 2.4
   _retreatSpeed: 3
-  _retreatMaxDistanceRange: {x: 2, y: 3}
-  _retreatMaxDuration: 1
+  _retreatMaxDistanceRange: {x: 1.6, y: 2}
+  _retreatMaxDuration: 0.8
 --- !u!114 &5539206445704400355
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1194,16 +1200,16 @@ MonoBehaviour:
   _stateMachine: {fileID: 471050665027572358}
   _hitboxManager: {fileID: 177954736906982195}
   _brain: {fileID: 6384646794695023396}
-  _recoveryDuration: 0.1
-  _attackRange: 4
-  _attackHeightTolerance: 4
+  _recoveryDuration: 0.8
+  _attackRange: 3
+  _attackHeightTolerance: 3
   _spawnPosition: {fileID: 7081938896300154162}
   _projectilePrefab: {fileID: 2482329534331223893, guid: b907ad8254fda2342a7cce21bfafb44b, type: 3}
   _projectileData: {fileID: 11400000, guid: 0d216a7f36ff4db439832aecbe015ee1, type: 2}
   _targetLayer:
     serializedVersion: 2
     m_Bits: 128
-  _flySpeed: 10
+  _flySpeed: 5.4
   _selectedAttack: 0
 --- !u!1 &7614167213580757949
 GameObject:

@@ -26,6 +26,7 @@ public class PlayerMoveController : MonoBehaviour
 
     [Header("Jump")]
     [SerializeField] MoveData _jumpData;
+    [SerializeField] float _inAirMoveSpeedMultiplier = 2f;
     [SerializeField] float _jumpVelocity = 16f;
     [SerializeField, Range(0f, 1f)] float _jumpCutMultiplier = 0.4f;
     [Space(10)]
@@ -33,8 +34,8 @@ public class PlayerMoveController : MonoBehaviour
     [SerializeField] float _apexGravity = 6f;
     [SerializeField] float _descendGravity = 4f;
     [SerializeField] float _apexThreshold = 1f;
-    [SerializeField] JumpPhase _jumpPhase = JumpPhase.None;
-    enum JumpPhase
+    public JumpPhase CurrentJumpPhase { get; private set; }
+    public enum JumpPhase
     {
         None,
         Grounded,
@@ -49,12 +50,10 @@ public class PlayerMoveController : MonoBehaviour
     [SerializeField] float _dashSpeedMultiplier = 1f; // Animation Curve로 조정
     public bool IsDodging { get; private set; }
 
-    [Header("InAirAttackTime")]
-    [SerializeField] float _airAttackStopDuration = 0.1f;
-    public bool IsAirAttacking { get; private set; }
-
     Vector2 _moveDirection;
     bool _isMovable => _stateMachine?.Move?.CurrentState.Equals(Move.State.Movable) ?? false;
+    public bool IsUpSlashing { get; private set; }
+    public bool IsDownSlashing { get; private set; }
 
     float _initialGravityScale;
     int _initialLayer;
@@ -143,11 +142,22 @@ public class PlayerMoveController : MonoBehaviour
             return;
         }
 
-        // inAirAttack
-        if (IsAirAttacking)
+        // inAir - UpSlash
+        if (IsUpSlashing)
         {
             _rigidbody.linearVelocity = Vector2.zero;
             return;
+        }
+
+        // inAir - DownSlash
+        if (IsDownSlashing)
+        {
+            return;
+        }
+
+        if (_environmentChecker.IsGrounded)
+        {
+            _playerCombatController.ResetAirAttackOnLanding();
         }
 
         // y velocity
@@ -160,7 +170,9 @@ public class PlayerMoveController : MonoBehaviour
             _rigidbody.linearVelocityX = 0f;
             return;
         }
-        _rigidbody.linearVelocityX = _moveDirection.x * _runSpeed * _moveSpeedMultiplier;
+        bool isInAir = !(CurrentJumpPhase == JumpPhase.None || CurrentJumpPhase == JumpPhase.Grounded);
+        float inAirMultiplier = isInAir ? _inAirMoveSpeedMultiplier : 1f;
+        _rigidbody.linearVelocityX = _moveDirection.x * _runSpeed * _moveSpeedMultiplier * inAirMultiplier;
     }
 
     #region Common
@@ -204,6 +216,9 @@ public class PlayerMoveController : MonoBehaviour
 
     void UpdateJumpPhase()
     {
+        if (_playerCombatController.IsAttacking)
+            return;
+
         float yVelocity = _rigidbody.linearVelocityY;
 
         // Ascend [_jumpVelocity ~ _apexThreshold]
@@ -233,7 +248,7 @@ public class PlayerMoveController : MonoBehaviour
     }
     void SetJumpPhase(JumpPhase newPhase)
     {
-        if (_jumpPhase == newPhase)
+        if (CurrentJumpPhase == newPhase)
             return;
 
         switch (newPhase)
@@ -247,17 +262,21 @@ public class PlayerMoveController : MonoBehaviour
                 break;
 
             case JumpPhase.Grounded:
-                _playerVisual.ResetInAirAttack();
                 _playerVisual.PlayLand();
+                _playerVisual.ResetUpSlashAttack();
+                _playerVisual.ResetDownSlashAttack();
                 break;
         }
 
-        _jumpPhase = newPhase;
+        CurrentJumpPhase = newPhase;
     }
 
     void UpdateJumpGravity()
     {
-        switch (_jumpPhase)
+        if (_playerCombatController.IsAttacking)
+            return;
+
+        switch (CurrentJumpPhase)
         {
             case JumpPhase.Grounded:
                 _rigidbody.gravityScale = _initialGravityScale;
@@ -278,10 +297,14 @@ public class PlayerMoveController : MonoBehaviour
     }
 
     #endregion
-    #region Dash
+    #region Dodge(Dash)
 
     void OnDodgePerformed()
     {
+        // 지면에서만 사용가능
+        if (CurrentJumpPhase != JumpPhase.Grounded)
+            return;
+
         if (!TryRequestMove(_dashData))
             return;
 
@@ -340,70 +363,67 @@ public class PlayerMoveController : MonoBehaviour
     }
 
     #endregion
-    #region InAirAttackTime
+    #region InAirAttack (UpSlash/DownSlash)
 
-    CancellationTokenSource _airAttackTimeCts;
-    public void StartAirAttackTime()
+    #region UpSlash
+
+    public void StartUpSlashMove()
     {
-        if (_environmentChecker.IsGrounded)
-            return;
-
-        _airAttackTimeCts?.Cancel();
-        _airAttackTimeCts?.Dispose();
-        _airAttackTimeCts = CancellationTokenSource.CreateLinkedTokenSource(destroyCancellationToken);
-        StartAirAttakTimeAsync().Forget();
-    }
-    async UniTask StartAirAttakTimeAsync()
-    {
-        IsAirAttacking = true;
-
-        // TODO : 일시정지 말고 좋은 방법으로 변경?
-        _rigidbody.linearVelocity = Vector2.zero;
+        IsUpSlashing = true;
         _rigidbody.gravityScale = 0f;
-
-        await UniTask.Delay(
-            TimeSpan.FromSeconds(_airAttackStopDuration),
-            DelayType.Realtime,
-            cancellationToken: destroyCancellationToken
-        );
-
-        EndAirAttackTime();
     }
-    public void EndAirAttackTime()
+    public void EndUpSlashMove()
     {
-        _airAttackTimeCts?.Cancel();
-        _airAttackTimeCts?.Dispose();
-        _airAttackTimeCts = null;
-
-        IsAirAttacking = false;
-
-        // 이후 JumpPhase에 따라 중력이 다시 결정됨
-        UpdateJumpPhase();
-        UpdateJumpGravity();
+        IsUpSlashing = false;
+        _rigidbody.gravityScale = _initialGravityScale;
     }
+
+    #endregion
+    #region DownSlash
+    public void StartDownSlashMove(float diveSpeed)
+    {
+        IsDownSlashing = true;
+        _rigidbody.gravityScale = 0f;
+        _rigidbody.linearVelocity = Vector2.down * Mathf.Max(0f, diveSpeed);
+    }
+
+    public void EndDownSlashMove()
+    {
+        IsDownSlashing = false;
+        _rigidbody.gravityScale = _initialGravityScale;
+    }
+
+    #endregion
 
     #endregion
     #region OnRestartGame
 
     void OnRestartGame()
     {
-        // 이전 비동기 작업부터 취소
-        EndAirAttackTime();
-        IsDodging = false;
-        _dodgeDirection = Vector2.zero;
+        // Move
         _moveDirection = Vector2.zero;
-        _jumpPhase = JumpPhase.None;
+
+        // Jump
+        CurrentJumpPhase = JumpPhase.None;
 
         // layer
         gameObject.layer = _initialLayer;
 
-        // 
+        // position
         transform.position = _initialPosition;
 
         // rigidbody
         _rigidbody.linearVelocity = Vector2.zero;
         _rigidbody.angularVelocity = 0f;
         _rigidbody.gravityScale = _initialGravityScale;
+
+        // Dodge
+        IsDodging = false;
+        _dodgeDirection = Vector2.zero;
+
+        // InAirAttack
+        EndUpSlashMove();
+        EndDownSlashMove();
     }
 
     #endregion

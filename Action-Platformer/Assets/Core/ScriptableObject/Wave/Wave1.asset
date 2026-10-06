@@ -22,5 +22,5 @@ MonoBehaviour:
     Side: 0
     Offset: {x: 0, y: 0}
   NextWaveDelaySeconds: 5
-  StartMsg: "\uB0AF\uC120 \uCE68\uC785\uC790\uB97C \uD5A5\uD574 \uBB34\uC5B8\uAC00
-    \uB2E4\uAC00\uC628\uB2E4\u2026"
+  StartMsg: "\uCE68\uC785\uC790\uB97C \uD5A5\uD574 \uBB34\uC5B8\uAC00 \uB2E4\uAC00\uC628\uB2E4
+    . . . "

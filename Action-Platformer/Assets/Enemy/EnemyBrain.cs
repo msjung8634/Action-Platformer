@@ -20,6 +20,7 @@ public class EnemyBrain : MonoBehaviour
 
     [Header("Lock")]
     [SerializeField, Min(0f)] float _lockDuration = 0.1f;
+    [SerializeField] bool _retreatWhenLockDenied = true;
     float _lockEndTime;
     bool _hasLock;
 
@@ -56,7 +57,7 @@ public class EnemyBrain : MonoBehaviour
         switch (_currentState)
         {
             case State.Chase:
-                UpdateMove();
+                UpdateChase();
                 break;
 
             case State.Lock:
@@ -92,7 +93,7 @@ public class EnemyBrain : MonoBehaviour
         _currentTarget = player != null ? player.transform : null;
     }
 
-    void UpdateMove()
+    void UpdateChase()
     {
         if (!_combatController.CanAttack)
             return;
@@ -101,7 +102,12 @@ public class EnemyBrain : MonoBehaviour
             return;
 
         if (!EnemyCoordinator.Instance.TryAcquireLock(this, attackType))
+        {
+            if (_retreatWhenLockDenied)
+                BeginRetreatOrRest();
+
             return;
+        }
 
         _hasLock = true;
         _currentState = State.Lock;
@@ -109,6 +115,20 @@ public class EnemyBrain : MonoBehaviour
 
         _moveController.StopMove();
         _combatController.BeginLock(_currentTarget);
+    }
+    void BeginRetreatOrRest()
+    {
+        _moveController.StopMove();
+
+        if (_moveController.TryBeginRetreat(_currentTarget))
+        {
+            _currentState = State.Retreat;
+        }
+        else
+        {
+            // 후퇴할 수 없거나 이미 충분히 멀면 바로 휴식
+            BeginRest();
+        }
     }
 
     void UpdateLock()

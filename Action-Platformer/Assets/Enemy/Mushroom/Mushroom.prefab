@@ -167,6 +167,11 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  _shakeDuration: 0.2
+  _shakeStrength: {x: 4, y: 2}
+  _shakeVibrato: 8
+  _shakeMultiplierStep: 0.3
+  _maxShakeMultiplier: 2.5
 --- !u!1 &1817485156520702820
 GameObject:
   m_ObjectHideFlags: 0
@@ -850,7 +855,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6411370618602910842}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -4.07, y: -2.96, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -961,9 +966,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 905a7b7e79a50f245a50b2b476668530, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  _searchInterval: 0.5
-  _lockDuration: 0.1
-  _restDurationRange: {x: 0.5, y: 1}
+  _searchInterval: 1
+  _lockDuration: 0.8
+  _retreatWhenLockDenied: 1
+  _restDurationRange: {x: 0.6, y: 0.8}
   _currentState: 0
   _currentTarget: {fileID: 0}
 --- !u!114 &3687295932290365077
@@ -997,8 +1003,8 @@ MonoBehaviour:
   _hitboxManager: {fileID: 55566622924160803}
   _chaseSpeed: 3
   <StopDistance>k__BackingField: 0.5
-  _retreatSpeed: 3
-  _retreatMaxDistanceRange: {x: 1, y: 1.2}
+  _retreatSpeed: 3.2
+  _retreatMaxDistanceRange: {x: 1, y: 1.4}
   _retreatMaxDuration: 0.5
 --- !u!114 &4898719064091895228
 MonoBehaviour:

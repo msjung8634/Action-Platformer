@@ -22,10 +22,15 @@ public class PlayerHitboxManager : MonoBehaviour
     [SerializeField] Vector2 _comboAttack3_Size = new(1.6f, 0.6f);
     [SerializeField] AttackData _comboAttack3_Data;
 
-    [Header("InAir Attack")]
-    [SerializeField] Transform _inAirAttack_Center;
-    [SerializeField] Vector2 _inAirAttack_Size = new(0.1f, 0.8f);
-    [SerializeField] AttackData _inAirAttack_Data;
+    [Header("InAir - UpSlash Attack")]
+    [SerializeField] Transform _upSlashAttack_Center;
+    [SerializeField] Vector2 _upSlashAttack_Size = new(0.1f, 0.8f);
+    [SerializeField] AttackData _upSlashAttack_Data;
+
+    [Header("InAir - DownSlash Attack")]
+    [SerializeField] Transform _downSlashAttack_Center;
+    [SerializeField] Vector2 _downSlashAttack_Size = new(0.1f, 0.8f);
+    [SerializeField] AttackData _downSlashAttack_Data;
 
     [Header("Dash Attack")]
     [SerializeField] Transform _dashAttack_Center;
@@ -128,7 +133,6 @@ public class PlayerHitboxManager : MonoBehaviour
     }
 
     #endregion
-
     #region DashAttack
 
     public void CheckDashAttack()
@@ -137,15 +141,19 @@ public class PlayerHitboxManager : MonoBehaviour
     }
 
     #endregion
+    #region InAirAttack (UpSlash/DownSlash)
 
-    #region InAirAttack
-
-    public bool CheckInAirAttack()
+    public bool CheckUpSlashAttack()
     {
-        CheckHit(_inAirAttack_Center, _inAirAttack_Size, _inAirAttack_Data, out bool isSuccess);
+        CheckHit(_upSlashAttack_Center, _upSlashAttack_Size, _upSlashAttack_Data, out bool isSuccess);
         return isSuccess;
     }
 
+    public bool CheckDownSlashAttack()
+    {
+        CheckHit(_downSlashAttack_Center, _downSlashAttack_Size, _downSlashAttack_Data, out bool isSuccess);
+        return isSuccess;
+    }
     #endregion
 
     #region FireBreath
@@ -170,7 +178,8 @@ public class PlayerHitboxManager : MonoBehaviour
             DrawHitbox(_comboAttack1_Center, _comboAttack1_Size);
             DrawHitbox(_comboAttack2_Center, _comboAttack2_Size);
             DrawHitbox(_comboAttack3_Center, _comboAttack3_Size);
-            DrawHitbox(_inAirAttack_Center, _inAirAttack_Size);
+            DrawHitbox(_upSlashAttack_Center, _upSlashAttack_Size);
+            DrawHitbox(_downSlashAttack_Center, _downSlashAttack_Size);
             DrawHitbox(_dashAttack_Center, _dashAttack_Size);
             DrawHitbox(_fireBreath_Center, _fireBreath_Size);
             return;
@@ -194,10 +203,16 @@ public class PlayerHitboxManager : MonoBehaviour
             DrawHitbox(_comboAttack3_Center, _comboAttack3_Size);
         }
 
-        if (_inAirAttack_Center != null &&
-            Selection.Contains(_inAirAttack_Center.gameObject))
+        if (_upSlashAttack_Center != null &&
+            Selection.Contains(_upSlashAttack_Center.gameObject))
         {
-            DrawHitbox(_inAirAttack_Center, _inAirAttack_Size);
+            DrawHitbox(_upSlashAttack_Center, _upSlashAttack_Size);
+        }
+
+        if (_downSlashAttack_Center != null &&
+            Selection.Contains(_downSlashAttack_Center.gameObject))
+        {
+            DrawHitbox(_downSlashAttack_Center, _downSlashAttack_Size);
         }
 
         if (_dashAttack_Center != null &&
