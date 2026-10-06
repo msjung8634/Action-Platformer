@@ -9,28 +9,23 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 13312, guid: 0000000000000000e000000000000000, type: 0}
+  m_Script: {fileID: 11500000, guid: 13b75c95f34a00d4e8c04f76b73312e6, type: 3}
   m_Name: Cell_21
-  m_EditorClassIdentifier: UnityEngine.dll::UnityEngine.Tilemaps.Tile
-  m_Sprite: {fileID: 1990477989, guid: 1d877cd6a862cb04e9793d3f85978dea, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Transform:
-    e00: 1
-    e01: 0
-    e02: 0
-    e03: 0
-    e10: 0
-    e11: 1
-    e12: 0
-    e13: 0
-    e20: 0
-    e21: 0
-    e22: 1
-    e23: 0
-    e30: 0
-    e31: 0
-    e32: 0
-    e33: 1
-  m_InstancedGameObject: {fileID: 0}
-  m_Flags: 1
-  m_ColliderType: 1
+  m_EditorClassIdentifier: Unity.2D.Tilemap.Extras::UnityEngine.Tilemaps.AnimatedTile
+  m_AnimatedSprites:
+  - {fileID: -1535763330, guid: 1d877cd6a862cb04e9793d3f85978dea, type: 3}
+  - {fileID: 1507267209, guid: 1d877cd6a862cb04e9793d3f85978dea, type: 3}
+  - {fileID: 2132313478, guid: 1d877cd6a862cb04e9793d3f85978dea, type: 3}
+  - {fileID: -1040470129, guid: 1d877cd6a862cb04e9793d3f85978dea, type: 3}
+  - {fileID: -539446435, guid: 1d877cd6a862cb04e9793d3f85978dea, type: 3}
+  - {fileID: -1532072686, guid: 1d877cd6a862cb04e9793d3f85978dea, type: 3}
+  - {fileID: -181608275, guid: 1d877cd6a862cb04e9793d3f85978dea, type: 3}
+  - {fileID: -1369884712, guid: 1d877cd6a862cb04e9793d3f85978dea, type: 3}
+  - {fileID: -1952113154, guid: 1d877cd6a862cb04e9793d3f85978dea, type: 3}
+  - {fileID: 381570311, guid: 1d877cd6a862cb04e9793d3f85978dea, type: 3}
+  m_MinSpeed: 1
+  m_MaxSpeed: 1
+  m_AnimationStartTime: 0
+  m_AnimationStartFrame: 0
+  m_TileColliderType: 0
+  m_TileAnimationFlags: 0

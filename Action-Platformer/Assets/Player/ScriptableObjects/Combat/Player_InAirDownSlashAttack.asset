@@ -14,11 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CombatFeedbackSO
   <SfxClip>k__BackingField: {fileID: 0}
   <SfxVolume>k__BackingField: 1
-  <ShakeStrength>k__BackingField: 0.06
+  <ShakeStrength>k__BackingField: 0.02
   <ShakeCount>k__BackingField: 1
   <ShakeInterval>k__BackingField: 0.05
   <StopTimeDuration>k__BackingField: 0.04
-  <SlowTimeDuration>k__BackingField: 0.1
+  <SlowTimeDuration>k__BackingField: 0.2
   <SlowTimeScale>k__BackingField: 0.6
   <AllowMultiHit>k__BackingField: 0
   <Damage>k__BackingField: 150

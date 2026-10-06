@@ -17,9 +17,11 @@ MonoBehaviour:
   <ShakeStrength>k__BackingField: 0.1
   <ShakeCount>k__BackingField: 1
   <ShakeInterval>k__BackingField: 0.05
-  <StopTimeDuration>k__BackingField: 0.01
-  <SlowTimeDuration>k__BackingField: 0.05
-  <SlowTimeScale>k__BackingField: 0.1
+  <StopTimeDuration>k__BackingField: 0.1
+  <SlowTimeDuration>k__BackingField: 0
+  <SlowTimeScale>k__BackingField: 0.4
   <AllowMultiHit>k__BackingField: 0
   <Damage>k__BackingField: 100
   <SpConsumption>k__BackingField: 0
+  <FpConsumption>k__BackingField: 0
+  <FpGain>k__BackingField: 0

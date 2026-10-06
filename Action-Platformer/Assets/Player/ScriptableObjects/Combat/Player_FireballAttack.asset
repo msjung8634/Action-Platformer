@@ -14,13 +14,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::AttackData
   <SfxClip>k__BackingField: {fileID: 0}
   <SfxVolume>k__BackingField: 1
-  <ShakeStrength>k__BackingField: 0.1
+  <ShakeStrength>k__BackingField: 0.02
   <ShakeCount>k__BackingField: 1
   <ShakeInterval>k__BackingField: 0.05
-  <StopTimeDuration>k__BackingField: 0.01
-  <SlowTimeDuration>k__BackingField: 0.05
-  <SlowTimeScale>k__BackingField: 0.1
+  <StopTimeDuration>k__BackingField: 0.04
+  <SlowTimeDuration>k__BackingField: 0.2
+  <SlowTimeScale>k__BackingField: 0.7
   <AllowMultiHit>k__BackingField: 0
   <Damage>k__BackingField: 200
   <SpConsumption>k__BackingField: 0
   <FpConsumption>k__BackingField: 100
+  <FpGain>k__BackingField: 0

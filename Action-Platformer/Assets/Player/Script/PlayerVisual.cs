@@ -74,8 +74,6 @@ public class PlayerVisual : MonoBehaviour
 
         _animator.ResetTrigger(_fireBallHash);
 
-        _animator.ResetTrigger(_igniteSwordHash);
-
         _animator.Play(_locomotionStateHash, 0, 0f);
     }
 
@@ -163,11 +161,5 @@ public class PlayerVisual : MonoBehaviour
     public void PlayFireBall()
     {
         _animator.SetTrigger(_fireBallHash);
-    }
-
-    static readonly int _igniteSwordHash = Animator.StringToHash("igniteSword");
-    public void PlayIgniteSword()
-    {
-        _animator.SetTrigger(_igniteSwordHash);
     }
 }

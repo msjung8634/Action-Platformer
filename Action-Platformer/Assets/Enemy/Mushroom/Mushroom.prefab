@@ -967,9 +967,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   _searchInterval: 1
-  _lockDuration: 0.8
+  _lockDuration: 0.1
   _retreatWhenLockDenied: 1
-  _restDurationRange: {x: 0.6, y: 0.8}
+  _restDurationRange: {x: 1, y: 1.2}
   _currentState: 0
   _currentTarget: {fileID: 0}
 --- !u!114 &3687295932290365077
@@ -1002,10 +1002,10 @@ MonoBehaviour:
   _stateMachine: {fileID: 7273803963576149397}
   _hitboxManager: {fileID: 55566622924160803}
   _chaseSpeed: 3
-  <StopDistance>k__BackingField: 0.5
-  _retreatSpeed: 3.2
-  _retreatMaxDistanceRange: {x: 1, y: 1.4}
-  _retreatMaxDuration: 0.5
+  <StopDistance>k__BackingField: 0.4
+  _retreatSpeed: 3
+  _retreatMaxDistanceRange: {x: 2, y: 3.6}
+  _retreatMaxDuration: 1.2
 --- !u!114 &4898719064091895228
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1023,7 +1023,7 @@ MonoBehaviour:
   _stateMachine: {fileID: 7273803963576149397}
   _hitboxManager: {fileID: 55566622924160803}
   _brain: {fileID: 1862091626183271301}
-  _recoveryDuration: 0.1
+  _recoveryDuration: 0.5
   _attackRange: 0.6
   _attackHeightTolerance: 1
   _selectedAttack: 0

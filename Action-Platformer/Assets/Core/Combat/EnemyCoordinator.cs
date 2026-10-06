@@ -27,10 +27,10 @@ public class EnemyCoordinator : Singleton<EnemyCoordinator>
         _meleeEnemySet.RemoveWhere(owner => owner == null);
         _rangedEnemySet.RemoveWhere(owner => owner == null);
 
-        // 같은 적이 중복으로 Lock을 획득하지 못하도록 처리
         if (HasLock(requester))
             return false;
 
+        // _lockInterval 간격동안은 연속 Lock 불가
         if (Time.time < _nextLockTime)
             return false;
 
@@ -63,14 +63,12 @@ public class EnemyCoordinator : Singleton<EnemyCoordinator>
 
     public bool HasLock(EnemyBrain requester)
     {
-        return requester != null &&
-               (_meleeEnemySet.Contains(requester) ||
-                _rangedEnemySet.Contains(requester));
+        return requester != null && 
+            (_meleeEnemySet.Contains(requester) || _rangedEnemySet.Contains(requester));
     }
 
     public void ReleaseLock(EnemyBrain requester)
     {
-        // 이미 반환한 요청도 안전하게 무시
         _meleeEnemySet.Remove(requester);
         _rangedEnemySet.Remove(requester);
     }

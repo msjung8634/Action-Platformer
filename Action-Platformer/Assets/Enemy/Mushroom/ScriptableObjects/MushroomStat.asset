@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ad597d2eadc05ca4eb5555a845dcf31f, type: 3}
   m_Name: MushroomStat
   m_EditorClassIdentifier: Assembly-CSharp::EnemyStatSO
-  <MaxHP>k__BackingField: 1000
+  <MaxHP>k__BackingField: 800

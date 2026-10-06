@@ -24,7 +24,7 @@ public class NecromancerCombatController : EnemyCombatControllerBase
 
     public override bool TrySelectAttack(Transform target, out EnemyAttackType attackType)
     {
-        // Mushroom은 근접 공격만 사용
+        // Necromancer는 근접 공격만 사용
         attackType = EnemyAttackType.Ranged;
 
         if (target == null || !CanAttack)
@@ -32,15 +32,10 @@ public class NecromancerCombatController : EnemyCombatControllerBase
 
         Vector2 offset = target.position - transform.position;
 
-        // 공격 거리 밖이면 Move
-        if (Mathf.Abs(offset.x) > _attackRange)
+        // Chase
+        if (Mathf.Abs(offset.x) > _attackRange || Mathf.Abs(offset.y) > _attackHeightTolerance)
             return false;
 
-        // 높이 차이가 크면 Move
-        if (Mathf.Abs(offset.y) > _attackHeightTolerance)
-            return false;
-
-        // 공격 조건 충족 시, Brain에서 Coordinator에 Lock 요청
         _selectedAttack = (AttackType)Random.Range(1, 2);
         return true;
     }

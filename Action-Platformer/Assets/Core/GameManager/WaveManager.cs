@@ -51,7 +51,7 @@ public class WaveManager : Singleton<WaveManager>
 
     void Update()
     {
-        if (!_isGameOver || _isRestarting)
+        if ((!_isGameOver && !IsCleared) || _isRestarting)
             return;
 
         if (Time.unscaledTime < _restartInputEnableTime)
@@ -83,9 +83,6 @@ public class WaveManager : Singleton<WaveManager>
 
     void OnPlayerDead()
     {
-        if (_isGameOver || IsCleared)
-            return;
-
         _isGameOver = true;
         StopGame();
         NoticeUI.Instance.Clear();
@@ -99,10 +96,13 @@ public class WaveManager : Singleton<WaveManager>
                 brain.enabled = false;
         }
 
+        ShowRestartPanel();
+    }
+    void ShowRestartPanel()
+    {
         _restartInputEnableTime = Time.unscaledTime + _restartInputDelay;
         _restartPanel.SetActive(true);
     }
-
 
     #region Start Game
     void StartGame(bool isRestart = false)
@@ -114,7 +114,6 @@ public class WaveManager : Singleton<WaveManager>
 
         CurrentWave = 0;
         IsCleared = false;
-
         _isGameOver = false;
         _isRestarting = false;
         _restartInputEnableTime = 0f;
@@ -149,7 +148,12 @@ public class WaveManager : Singleton<WaveManager>
             }
 
             IsCleared = true;
-            NoticeUI.Instance.ShowMsg($"간만에 실력이 좋은놈이 왔군...");
+            NoticeUI.Instance.ShowMsg($"간만에 실력이 좋은놈이 왔군 . . .");
+            NoticeUI.Instance.ShowMsg($"또 보자고 친구 . . ");
+
+            await UniTask.WaitUntil(() => !NoticeUI.Instance.IsBusy, cancellationToken: token);
+            // 사망시 재시작 활용
+            OnPlayerDead();
         }
         catch (OperationCanceledException)
         {

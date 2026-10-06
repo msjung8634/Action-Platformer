@@ -13,16 +13,4 @@ public class NecromancerVisual : EnemyVisualBase
     {
         _animator.SetTrigger(_magicMissileHash);
     }
-
-    static readonly int _hitHash = Animator.StringToHash("hit");
-    public void PlayHit()
-    {
-        _animator.SetTrigger(_hitHash);
-    }
-
-    static readonly int _dieHash = Animator.StringToHash("die");
-    public void PlayDie()
-    {
-        _animator.SetTrigger(_dieHash);
-    }
 }

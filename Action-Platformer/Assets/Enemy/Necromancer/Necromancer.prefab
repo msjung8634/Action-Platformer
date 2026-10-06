@@ -1144,7 +1144,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   _searchInterval: 1
-  _lockDuration: 0.8
+  _lockDuration: 0.1
   _retreatWhenLockDenied: 1
   _restDurationRange: {x: 0.6, y: 0.8}
   _currentState: 0
@@ -1179,10 +1179,10 @@ MonoBehaviour:
   _stateMachine: {fileID: 471050665027572358}
   _hitboxManager: {fileID: 177954736906982195}
   _chaseSpeed: 3
-  <StopDistance>k__BackingField: 2.4
+  <StopDistance>k__BackingField: 1.6
   _retreatSpeed: 3
-  _retreatMaxDistanceRange: {x: 1.6, y: 2}
-  _retreatMaxDuration: 0.8
+  _retreatMaxDistanceRange: {x: 2, y: 4}
+  _retreatMaxDuration: 1
 --- !u!114 &5539206445704400355
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1200,9 +1200,9 @@ MonoBehaviour:
   _stateMachine: {fileID: 471050665027572358}
   _hitboxManager: {fileID: 177954736906982195}
   _brain: {fileID: 6384646794695023396}
-  _recoveryDuration: 0.8
-  _attackRange: 3
-  _attackHeightTolerance: 3
+  _recoveryDuration: 1
+  _attackRange: 2.4
+  _attackHeightTolerance: 2.4
   _spawnPosition: {fileID: 7081938896300154162}
   _projectilePrefab: {fileID: 2482329534331223893, guid: b907ad8254fda2342a7cce21bfafb44b, type: 3}
   _projectileData: {fileID: 11400000, guid: 0d216a7f36ff4db439832aecbe015ee1, type: 2}

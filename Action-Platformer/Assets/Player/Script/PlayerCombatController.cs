@@ -141,10 +141,6 @@ public class PlayerCombatController : MonoBehaviour
 
     void OnAttackPerformed()
     {
-        Debug.Log($"AttackInput | Grounded={_environmentChecker.IsGrounded}, " +
-                    $"Phase={_playerMoveController.CurrentJumpPhase}, " +
-                    $"Attacking={IsAttacking}, AirAttack={_isAirAttacking}");
-
         // 지면에서 공격 중이면 콤보저장 시도
         if (IsAttacking && !_isAirAttacking)
         {
