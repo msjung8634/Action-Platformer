@@ -60,7 +60,7 @@ public class NoticeUI : Singleton<NoticeUI>
         Clear();
 
         _messages.Enqueue($"{seconds}");
-        PlayNext(.9f);
+        PlayNext(.99f);
     }
 
     Sequence _noticeSequence;

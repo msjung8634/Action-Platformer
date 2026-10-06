@@ -22,7 +22,6 @@ public class WaveSpawnData
 public class WaveData : ScriptableObject
 {
     public List<WaveSpawnData> Spawns = new();
-    [Min(0f)] public float NextWaveDelaySeconds = 10f;
-
     [SerializeField] public string StartMsg;
+    [Min(0f)] public float StartDelaySeconds = 3f;
 }

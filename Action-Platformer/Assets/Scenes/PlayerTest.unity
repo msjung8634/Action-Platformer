@@ -18666,12 +18666,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::WaveManager
   _playerResourceManager: {fileID: 621576189}
   _restartPanel: {fileID: 220344281}
-  _restartInputDelay: 2
+  _restartInputDelay: 1.2
   _leftSpawnPoint: {fileID: 1801583232}
   _rightSpawnPoint: {fileID: 1471585758}
   _startDelaySeconds: 3
   _waveDatas:
   - {fileID: 11400000, guid: ca5f709fd8fd93245a74d339c90e2630, type: 2}
+  - {fileID: 11400000, guid: f408824b01d14534b8362360350a0d03, type: 2}
+  - {fileID: 11400000, guid: 2dbb7cb905883b64892c152b2b1af20a, type: 2}
+  - {fileID: 11400000, guid: ae29757e36f2d1e41ab3c7dfaa049012, type: 2}
+  - {fileID: 11400000, guid: aeeb771f1634e1b49ac2bcfaaa65ea0d, type: 2}
 --- !u!1 &1096119639
 GameObject:
   m_ObjectHideFlags: 0

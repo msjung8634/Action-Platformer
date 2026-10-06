@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4dce696eccea4f94a91802ecaa8d4e15, type: 3}
   m_Name: PlayerStat
   m_EditorClassIdentifier: Assembly-CSharp::PlayerStatSO
-  <MaxHP>k__BackingField: 200
-  <MaxSP>k__BackingField: 500
+  <MaxHP>k__BackingField: 800
+  <MaxSP>k__BackingField: 300
   <MaxFP>k__BackingField: 800

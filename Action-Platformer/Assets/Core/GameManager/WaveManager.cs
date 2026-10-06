@@ -2,7 +2,6 @@ using Cysharp.Threading.Tasks;
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Controls;
@@ -23,11 +22,10 @@ public class WaveManager : Singleton<WaveManager>
     [SerializeField] Transform _rightSpawnPoint;
 
     [Header("Wave")]
-    [SerializeField, Min(0f)] float _startDelaySeconds = 3f;
     [SerializeField] WaveData[] _waveDatas;
 
     readonly List<GameObject> _spawnedEnemies = new();
-    CancellationTokenSource _gameCts;
+    CancellationTokenSource _gameLoopCts;
 
     public int CurrentWave { get; private set; }
     public int TotalWaves => _waveDatas.Length;
@@ -83,6 +81,11 @@ public class WaveManager : Singleton<WaveManager>
 
     void OnPlayerDead()
     {
+        if (!IsCleared)
+        {
+            _startWaveIndex = CurrentWave - 1;
+        }
+
         _isGameOver = true;
         StopGame();
         NoticeUI.Instance.Clear();
@@ -105,14 +108,14 @@ public class WaveManager : Singleton<WaveManager>
     }
 
     #region Start Game
+    int _startWaveIndex;
     void StartGame(bool isRestart = false)
     {
-        if (isRestart)
+        if (!isRestart)
         {
-            NoticeUI.Instance.ShowMsg($"어디서 본듯 한 놈이군...");
+            NoticeUI.Instance.ShowMsg($"침입자다 !!!");
         }
 
-        CurrentWave = 0;
         IsCleared = false;
         _isGameOver = false;
         _isRestarting = false;
@@ -120,39 +123,38 @@ public class WaveManager : Singleton<WaveManager>
 
         _restartPanel.SetActive(false);
 
-        _gameCts = new CancellationTokenSource();
-        StartGameAsync(_gameCts.Token).Forget();
+        _gameLoopCts = new CancellationTokenSource();
+        StartGameAsync(_gameLoopCts.Token).Forget();
     }
     async UniTask StartGameAsync(CancellationToken token)
     {
         try
         {
-            await WaveStartCountdownAsync(_startDelaySeconds, token);
-
-            for (int i = 0; i < _waveDatas.Length; i++)
+            for (int i = _startWaveIndex; i < _waveDatas.Length; i++)
             {
                 CurrentWave = i + 1;
+                WaveData waveData = _waveDatas[i];
                 NoticeUI.Instance.ShowMsg($"{CurrentWave}번째 전투");
                 NoticeUI.Instance.ShowMsg($"{_waveDatas[i].StartMsg}");
+                await WaveStartCountdownAsync(waveData.StartDelaySeconds, token);
 
-                WaveData waveData = _waveDatas[i];
                 await StartWaveAsync(waveData, token);
+
                 await UniTask.WaitUntil(IsAllEnemiesRemoved, cancellationToken: token);
                 NoticeUI.Instance.ShowMsg($"모든 적 처치");
 
                 if (i == _waveDatas.Length - 1)
                     break;
-
-                // 다음 Wave 시작까지 대기
-                await WaveStartCountdownAsync(waveData.NextWaveDelaySeconds, token);
             }
 
-            IsCleared = true;
-            NoticeUI.Instance.ShowMsg($"간만에 실력이 좋은놈이 왔군 . . .");
-            NoticeUI.Instance.ShowMsg($"또 보자고 친구 . . ");
+            NoticeUI.Instance.ShowMsg($"간만에 실력 좋은놈이 왔군 . . .");
+            NoticeUI.Instance.ShowMsg($"또 보자고 애송이 . . .");
 
             await UniTask.WaitUntil(() => !NoticeUI.Instance.IsBusy, cancellationToken: token);
+            
             // 사망시 재시작 활용
+            IsCleared = true;
+            _startWaveIndex = 0;
             OnPlayerDead();
         }
         catch (OperationCanceledException)
@@ -160,9 +162,8 @@ public class WaveManager : Singleton<WaveManager>
             
         }
     }
-    async UniTask WaveStartCountdownAsync(float durationSeconds, CancellationToken token)
+    async UniTask WaveStartCountdownAsync(float durationSeconds, CancellationToken token, bool isFirst = true)
     {
-        NoticeUI.Instance.ShowMsg($"다음 웨이브 시작까지...");
         await UniTask.WaitUntil(() => !NoticeUI.Instance.IsBusy, cancellationToken: token);
 
         float endTime = Time.time + durationSeconds;
@@ -190,12 +191,12 @@ public class WaveManager : Singleton<WaveManager>
     #region Stop Game
     public void StopGame()
     {
-        if (_gameCts == null)
+        if (_gameLoopCts == null)
             return;
 
-        _gameCts.Cancel();
-        _gameCts.Dispose();
-        _gameCts = null;
+        _gameLoopCts.Cancel();
+        _gameLoopCts.Dispose();
+        _gameLoopCts = null;
     }
 
     #endregion

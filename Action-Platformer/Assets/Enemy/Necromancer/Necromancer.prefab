@@ -1144,7 +1144,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   _searchInterval: 1
-  _lockDuration: 0.1
+  _lockDuration: 0.2
   _retreatWhenLockDenied: 1
   _restDurationRange: {x: 0.6, y: 0.8}
   _currentState: 0

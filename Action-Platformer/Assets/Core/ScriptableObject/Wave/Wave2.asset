@@ -37,5 +37,5 @@ MonoBehaviour:
     Prefab: {fileID: 6411370618602910842, guid: 6565f12e4164af447807ce2e34a25881, type: 3}
     Side: 0
     Offset: {x: 0, y: 0}
-  NextWaveDelaySeconds: 5
+  StartDelaySeconds: 3
   StartMsg: "\uB354 \uB9CE\uC740 \uC801\uC774 \uBAB0\uB824\uC628\uB2E4 . . ."

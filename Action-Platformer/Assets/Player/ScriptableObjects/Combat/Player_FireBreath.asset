@@ -21,7 +21,7 @@ MonoBehaviour:
   <SlowTimeDuration>k__BackingField: 0.03
   <SlowTimeScale>k__BackingField: 0.9
   <AllowMultiHit>k__BackingField: 1
-  <Damage>k__BackingField: 150
+  <Damage>k__BackingField: 160
   <SpConsumption>k__BackingField: 0
   <FpConsumption>k__BackingField: 400
   <FpGain>k__BackingField: 0
