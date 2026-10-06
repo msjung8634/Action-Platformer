@@ -35,7 +35,7 @@ public class PlayerResourceManager : MonoBehaviour, IHpHandler, ISpHandler, IFpH
         SP.OnChanged += SpChanged;
         FP.OnChanged += FpChanged;
 
-        if (WaveManager.Instance == null) return;
+        if (!WaveManager.HasInstance) return;
         WaveManager.Instance.OnRestartGame += OnRestartGame;
     }
 
@@ -45,7 +45,7 @@ public class PlayerResourceManager : MonoBehaviour, IHpHandler, ISpHandler, IFpH
         SP.OnChanged -= SpChanged;
         FP.OnChanged -= FpChanged;
 
-        if (WaveManager.Instance == null) return;
+        if (!WaveManager.HasInstance) return;
         WaveManager.Instance.OnRestartGame -= OnRestartGame;
     }
 

@@ -44,13 +44,13 @@ public class PlayerHitboxManager : MonoBehaviour
 
     void OnEnable()
     {
-        if (WaveManager.Instance == null) return;
+        if (!WaveManager.HasInstance) return;
         WaveManager.Instance.OnRestartGame += OnRestartGame;
     }
 
     void OnDisable()
     {
-        if (WaveManager.Instance == null) return;
+        if (!WaveManager.HasInstance) return;
         WaveManager.Instance.OnRestartGame -= OnRestartGame;
     }
 

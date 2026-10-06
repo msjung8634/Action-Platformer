@@ -84,7 +84,7 @@ public class PlayerMoveController : MonoBehaviour
 
         _playerInput.DodgePerformed += OnDodgePerformed;
 
-        if (WaveManager.Instance == null) return;
+        if (!WaveManager.HasInstance) return;
         WaveManager.Instance.OnRestartGame += OnRestartGame;
     }
 
@@ -98,7 +98,7 @@ public class PlayerMoveController : MonoBehaviour
 
         _playerInput.DodgePerformed -= OnDodgePerformed;
 
-        if (WaveManager.Instance == null) return;
+        if (!WaveManager.HasInstance) return;
         WaveManager.Instance.OnRestartGame -= OnRestartGame;
     }
 

@@ -38,7 +38,7 @@ public abstract class ResourceBarUI : MonoBehaviour
 
     protected virtual void OnEnable()
     {
-        if (WaveManager.Instance == null) return;
+        if (!WaveManager.HasInstance) return;
         WaveManager.Instance.OnRestartGame += RefreshImmediate;
     }
 
@@ -57,7 +57,7 @@ public abstract class ResourceBarUI : MonoBehaviour
         Unsubscribe();
         _isAnimating = false;
 
-        if (WaveManager.Instance == null) return;
+        if (!WaveManager.HasInstance) return;
         WaveManager.Instance.OnRestartGame -= RefreshImmediate;
     }
 

@@ -70,7 +70,7 @@ public class PlayerCombatController : MonoBehaviour
         _playerInput.FireBreathPerformed += OnFireBreathPerformed;
         _playerInput.FireBallPerformed += OnFireBallPerformed;
 
-        if (WaveManager.Instance == null) return;
+        if (!WaveManager.HasInstance) return;
         WaveManager.Instance.OnRestartGame += OnRestartGame;
     }
 
@@ -86,7 +86,7 @@ public class PlayerCombatController : MonoBehaviour
         _playerInput.FireBallPerformed -= OnFireBallPerformed;
         _playerInput.FireBreathPerformed -= OnFireBreathPerformed;
 
-        if (WaveManager.Instance == null) return;
+        if (!WaveManager.HasInstance) return;
         WaveManager.Instance.OnRestartGame -= OnRestartGame;
     }
 
