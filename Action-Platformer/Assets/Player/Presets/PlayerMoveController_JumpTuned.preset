@@ -1,0 +1,112 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!181963792 &2655988077585873504
+Preset:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: PlayerMoveController_JumpTuned
+  m_TargetType:
+    m_NativeTypeID: 114
+    m_ManagedTypePPtr: {fileID: 11500000, guid: c387714f68a4c124aa79604ef5a50844, type: 3}
+    m_ManagedTypeFallback: 
+  m_Properties:
+  - target: {fileID: 0}
+    propertyPath: m_Enabled
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: m_EditorHideFlags
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: m_EditorClassIdentifier
+    value: '::'
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: _resourceManager
+    value: 
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: _environmentChecker
+    value: 
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: _stateMachine
+    value: 
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: _playerHitboxManager
+    value: 
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: _runSpeed
+    value: 3
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: _walkSpeedMultiplier
+    value: 0.6
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: _idleThreshold
+    value: 0.01
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: _walkThreshold
+    value: 0.4
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: _jumpData
+    value: 
+    objectReference: {fileID: 11400000, guid: 8e74f1dfacaed84439e4ba50246660e7, type: 2}
+  - target: {fileID: 0}
+    propertyPath: _inAirMoveSpeedMultiplier
+    value: 1.15
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: _jumpVelocity
+    value: 7.25
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: _jumpCutMultiplier
+    value: 0.5
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: _ascendGravity
+    value: 2.1875
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: _apexGravity
+    value: 2.1875
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: _descendGravity
+    value: 2.734375
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: _apexThreshold
+    value: 0.5175
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: _dashData
+    value: 
+    objectReference: {fileID: 11400000, guid: 196d1a685fea77d46a302a6c1e1c5057, type: 2}
+  - target: {fileID: 0}
+    propertyPath: _dashSpeed
+    value: 4.8
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: _dashSpeedMultiplier
+    value: 1
+    objectReference: {fileID: 0}
+  m_ExcludedProperties:
+  - _resourceManager
+  - _environmentChecker
+  - _stateMachine
+  - _playerHitboxManager
+  m_CoupledType:
+    m_NativeTypeID: 0
+    m_ManagedTypePPtr: {fileID: 0}
+    m_ManagedTypeFallback: 
+  m_CoupledProperties: []

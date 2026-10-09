@@ -1,0 +1,113 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!181963792 &2655988077585873504
+Preset:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: PlayerCombatController
+  m_TargetType:
+    m_NativeTypeID: 114
+    m_ManagedTypePPtr: {fileID: 11500000, guid: 824e2a2926fc93d4294b9b5400e5d0c2, type: 3}
+    m_ManagedTypeFallback: 
+  m_Properties:
+  - target: {fileID: 0}
+    propertyPath: m_Enabled
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: m_EditorHideFlags
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: m_EditorClassIdentifier
+    value: Assembly-CSharp::PlayerCombatController
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: _resourceManager
+    value: 
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: _environmentChecker
+    value: 
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: _stateMachine
+    value: 
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: _playerHitboxManager
+    value: 
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: _comboAttack1
+    value: 
+    objectReference: {fileID: 11400000, guid: 74121391a6b0cd641b345c9a59ce0d92, type: 2}
+  - target: {fileID: 0}
+    propertyPath: _comboAttack2
+    value: 
+    objectReference: {fileID: 11400000, guid: 693bdbafe05e5834f865e8f64ee25da1, type: 2}
+  - target: {fileID: 0}
+    propertyPath: _comboAttack3
+    value: 
+    objectReference: {fileID: 11400000, guid: 3d5cee76b03ef0d43843fdd201de8a2a, type: 2}
+  - target: {fileID: 0}
+    propertyPath: _maxCombo
+    value: 3
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: _comboAttackInputBufferTime
+    value: 0.4
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: _dashAttack
+    value: 
+    objectReference: {fileID: 11400000, guid: b0e60019a6ac3ed4ba732fef08f7c3ed, type: 2}
+  - target: {fileID: 0}
+    propertyPath: _upSlashData
+    value: 
+    objectReference: {fileID: 11400000, guid: a10f8c7d33023c249a60d112f10c7a63, type: 2}
+  - target: {fileID: 0}
+    propertyPath: _downSlashData
+    value: 
+    objectReference: {fileID: 11400000, guid: 5c097bf438eb34642bcb78c08620e304, type: 2}
+  - target: {fileID: 0}
+    propertyPath: _downSlashDiveSpeed
+    value: 18
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: _fireball
+    value: 
+    objectReference: {fileID: 11400000, guid: 288be554e78ff5846b0e5e59c8acee2a, type: 2}
+  - target: {fileID: 0}
+    propertyPath: _spawnPosition
+    value: 
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: _projectilePrefab
+    value: 
+    objectReference: {fileID: 7578150787847281244, guid: 20bd5f609f5dd7343af78a6a5406666b, type: 3}
+  - target: {fileID: 0}
+    propertyPath: _targetLayer.m_Bits
+    value: 256
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: _flySpeed
+    value: 10
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: _firebreath
+    value: 
+    objectReference: {fileID: 11400000, guid: 6f3ad9fa553459343b7e8204304c2473, type: 2}
+  m_ExcludedProperties:
+  - _resourceManager
+  - _environmentChecker
+  - _stateMachine
+  - _playerHitboxManager
+  - _spawnPosition
+  m_CoupledType:
+    m_NativeTypeID: 0
+    m_ManagedTypePPtr: {fileID: 0}
+    m_ManagedTypeFallback: 
+  m_CoupledProperties: []

@@ -100,6 +100,10 @@ public class PlayerVisual : MonoBehaviour
     static readonly int _landHash = Animator.StringToHash("land");
     public void PlayAscend()
     {
+        // A landing trigger can remain pending while Locomotion is active.
+        // Clear it before jumping so Apex/Descend cannot immediately land again.
+        _animator.ResetTrigger(_landHash);
+        _animator.ResetTrigger(_descendHash);
         _animator.SetTrigger(_ascendHash);
     }
     public void PlayDescend()
@@ -108,6 +112,8 @@ public class PlayerVisual : MonoBehaviour
     }
     public void PlayLand()
     {
+        _animator.ResetTrigger(_ascendHash);
+        _animator.ResetTrigger(_descendHash);
         _animator.SetTrigger(_landHash);
     }
 
